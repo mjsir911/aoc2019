@@ -21,10 +21,9 @@ f2 = piecewise(Dict(
 ))
 # println(f2(99))
 
-r = Array{Union{Int,Symbol}}(map(x -> parse(Int, x), split(readline(), ",")))
-r[2] = :n
-r[3] = :v
-@show r
+reel = Array{Union{Int,Symbol}}(map(x -> parse(Int, x), split(readline(), ",")))
+reel[2] = :n
+reel[3] = :v
 
 opcodes = Dict(
 	1 => +,
@@ -42,10 +41,10 @@ function thing(op, arg1, arg2, dest)
 	if typeof(dest) == Int
 		dest += 1
 	end
-	return :(r[$(dest)] = $(opcodes[op])(r[$(arg1)], r[$(arg2)]))
+	return :(reel[$(dest)] = $(opcodes[op])(reel[$(arg1)], reel[$(arg2)]))
 end
 
-solution = Expr(:toplevel, Iterators.map(l -> thing(l...), Iterators.filter(l -> length(l) == 4, Iterators.partition(r, 4)))...)
+solution = Expr(:toplevel, Iterators.map(l -> thing(l...), Iterators.filter(l -> length(l) == 4, Iterators.partition(reel, 4)))...)
 
 function expand(e::Expr, l::Dict{Expr,Expr})
 	if haskey(l, e)
@@ -92,7 +91,7 @@ function realize(expr::Expr)
 	eval(Expr(:function, Expr(:tuple, Expr(:parameters, freev...)), Expr(:block, expr)))
 end
 
-@show f = realize(@show eval(expand(:(r[1]), dep)))
+@show f = realize(@show eval(@show expand(:(reel[1]), dep)))
 @show f(n=12, v=2)
 
 # x = r[1] + r[2]
