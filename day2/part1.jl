@@ -45,6 +45,12 @@ function thing(op, arg1, arg2, dest)
 end
 
 solution = Expr(:toplevel, Iterators.map(l -> thing(l...), Iterators.filter(l -> length(l) == 4, Iterators.partition(reel, 4)))...)
+# this dependency graph only works because I've manually taken a look at the
+# input data and none of the instructions affect future instructions. Would be
+# much more complicated if future dereferences depended on past calculations
+#
+# And don't get me started on variable future opcodes
+dep = Dict(solution.args |> s -> map(a -> Pair(a.args...), s))
 
 function expand(e::Expr, l::Dict{Expr,Expr})
 	if haskey(l, e)
@@ -55,7 +61,6 @@ function expand(e::Expr, l::Dict{Expr,Expr})
 	end
 end
 
-dep = Dict(solution.args |> s -> map(a -> Pair(a.args...), s))
 
 
 # this could all be done with a symbolic library, but I want to do it myself
@@ -91,8 +96,9 @@ function realize(expr::Expr)
 	eval(Expr(:function, Expr(:tuple, Expr(:parameters, freev...)), Expr(:block, expr)))
 end
 
-@show f = realize(@show eval(@show expand(:(reel[1]), dep)))
-@show f(n=12, v=2)
+f = realize(eval(expand(:(reel[1]), dep)))
+# magix
+println(f(n=12, v=2))
 
 # x = r[1] + r[2]
 #=
