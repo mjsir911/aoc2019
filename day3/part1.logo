@@ -1,0 +1,108 @@
+load "logolib/map
+load "logolib/combine
+load "logolib/case
+
+to rmov :dir :amount
+	setheading :dir fd :amount
+end
+
+to pmov :inst
+	rmov first inst last inst
+	output pos
+end
+
+to readcsv
+	output parse map [ ifelse ?=", [char 32] [?] ] readword
+end
+
+to dowire
+	make "DIRMAP [ [[U] 0] [[R] 90] [[D] 180] [[L] 270] ]
+	penup home pendown
+	output map "pmov map [sentence case (first ?) DIRMAP butfirst ?] readcsv
+	home
+end
+
+to p1 :l
+	output first :l
+end
+to p2 :l
+	output last :l
+end
+
+to x :p
+	output (first :p)
+end
+to y :p
+	output (last :p)
+end
+
+load "logolib/cond
+load "logolib/localmake
+load "logolib/ignore
+
+to vertical? :l
+	output (x p1 :l) = (x p2 :l)
+end
+to horizontal? :l
+	output (y p1 :l) = (y p2 :l)
+end
+to between? :p1 :p2 :p3
+	output cond [ [[:p1 < :p2] and :p1 < :p3 :p3 < :p2 ]
+	              [[:p1 > :p2] and :p1 > :p3 :p3 > :p2 ]
+	              [[:p1 = :p2] "false ] ]
+end
+
+to intersect? :l1 l2
+	output cond [ [[and (vertical? :l1) (horizontal? :l2)] and (between? (y p1 :l1) (y p2 :l1) (y p1 :l2)) (between? (x p1 :l2) (x p2 :l2) (x p1 :l1))]
+	              [[and (vertical? :l2) (horizontal? :l1)] and (between? (y p1 :l2) (y p2 :l2) (y p1 :l1)) (between? (x p1 :l1) (x p2 :l1) (x p1 :l2))]
+	              [else "false] ]
+end
+to intersection :l1 l2
+	output cond [ [[not intersect? :l1 :l2] []]
+	              [[and (vertical? :l1) (horizontal? :l2)] list y p1 :l2 x p1 :l1]
+	              [[and (vertical? :l2) (horizontal? :l1)] list y p1 :l1 x p1 :l2] ]
+end
+
+to full? :l
+	output not empty? l
+end
+
+load "logolib/filter
+to lines :ps
+	output filter "full? map [ ifelse empty? ?REST [[]] [list ? first ?REST] ] :ps
+end
+
+load "logolib/map.se
+
+to intersections :w1 :w2
+	output filter "full? map.se [[l1] map [[l2] intersection :l1 :l2] :w1] :w2
+end
+
+to abs :x
+	output ifelse 0 < :x :x -:x
+end
+
+to manhattan :p
+	show :p
+	output (abs x :p) + (abs y :p)
+end
+
+to min :a :b
+	output ifelse :a < :b [:a] [:b]
+end
+
+clearscreen
+window
+setscrunch 0.08 0.08
+
+; the only colors you need
+make "red [255 0 0]
+make "green [0 255 0]
+setpencolor red
+make "wire1 dowire
+setpencolor green
+make "wire2 dowire
+
+
+load "logolib/reduce
+show reduce "min map "manhattan intersections lines :wire1 lines :wire2
