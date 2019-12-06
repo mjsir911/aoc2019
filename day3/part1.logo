@@ -1,7 +1,4 @@
-load "logolib/map
-load "logolib/combine
-load "logolib/case
-
+#!/usr/bin/env logo
 to rmov :dir :amount
 	setheading :dir fd :amount
 end
@@ -36,10 +33,6 @@ to y :p
 	output (last :p)
 end
 
-load "logolib/cond
-load "logolib/localmake
-load "logolib/ignore
-
 to vertical? :l
 	output (x p1 :l) = (x p2 :l)
 end
@@ -67,12 +60,9 @@ to full? :l
 	output not empty? l
 end
 
-load "logolib/filter
 to lines :ps
 	output filter "full? map [ ifelse empty? ?REST [[]] [list ? first ?REST] ] :ps
 end
-
-load "logolib/map.se
 
 to intersections :w1 :w2
 	output filter "full? map.se [[l1] map [[l2] intersection :l1 :l2] :w1] :w2
@@ -100,7 +90,6 @@ make "green [0 255 0]
 setpencolor red
 make "wire1 map "pmov dowire
 setpencolor green
-load "logolib/reduce
 show reduce "min map "manhattan filter "full? map.se [make "l list pos pmov ? map [intersection :l ?] lines :wire1 ] dowire
 
 
