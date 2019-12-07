@@ -27,7 +27,7 @@ void computer(int *r, FILE *input) {
 	int op;
 	fprintf(stderr, "pc: %ld\n", (p) - r);
 	fprintf(stderr, "op: %d\n", *p);
-	while ((op = *(p++)) != 99) {
+	while ((op = *(p++))) {
 		int pmode_t[8] = {0};
 		int *pmode = pmode_t;
 		for (int i=0; i < 8; i++) {
@@ -97,6 +97,10 @@ void computer(int *r, FILE *input) {
 				int val1 = getval(r, *(p++), &pmode);
 				int val2 = getval(r, *(p++), &pmode);
 				r[*(p++)] = val1 == val2;
+				break;
+			}
+			case 99: {
+				return;
 				break;
 			}
 			default: {
