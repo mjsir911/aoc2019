@@ -25,7 +25,6 @@
 
 (define neighborhood-path (diff (graph-find orbits 'YOU) (graph-find orbits 'SAN)))
 (define neighborhood (graph-get orbits neighborhood-path))
-(display "\n")
 (display (+ -4
             (length (graph-find neighborhood 'YOU))
             (length (graph-find neighborhood 'SAN))))
