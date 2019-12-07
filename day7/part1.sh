@@ -17,6 +17,8 @@ function amplify() {
 }
 
 
+
+gcc computer.c -lm -DINTPROG="$(cat | tr -d '\n')"
 permut 0 1 2 3 4 | while read line; do
 	echo $line $(amplify $line)
 done | sort -n -k 6
