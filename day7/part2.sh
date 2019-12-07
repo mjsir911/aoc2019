@@ -21,7 +21,13 @@ function amplify() {
 	mkfifo $loop
 	trap "rm $loop" EXIT
 
-	(echo 0; unbuffer timeout 0.2 cat <$loop) | phase $1 | phase $2 | phase $3 |phase $4 | phase $5 > >(tee /dev/stdout $loop) | tail -n 1
+	(echo 0; unbuffer timeout 0.2 cat <$loop) \
+	| phase $1 \
+	| phase $2 \
+	| phase $3 \
+	| phase $4 \
+	| phase $5 > >(tee /dev/stdout $loop) \
+	| tail -n 1
 }
 
 
