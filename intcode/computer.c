@@ -116,7 +116,13 @@ void computer(int *r, FILE *input) {
 
 int main(int argc, char *argv[]) {
 	int reel[] = {
-		#include "prog.int"
+		#ifdef INTPROG
+			INTPROG
+		#else
+			#include "prog.int"
+		#endif
 	};
 	computer(reel, stdin);
+	fprintf(stderr, "exiting\n");
+	return 0;
 }
