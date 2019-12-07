@@ -13,31 +13,18 @@ function permut() {
 }
 
 function phase() {
-	(echo $1; cat) | unbuffer ./a.out
-}
-
-function start() {
-	(echo 0; cat) | phase $1
+	(echo $1; unbuffer cat) | stdbuf -i0 -o0 -e0  ./a.out 2> /dev/null
 }
 
 function amplify() {
-	in=$(mktemp -u)
-	out=$(mktemp -u)
-	mkfifo $in $out
-	unbuffer cat $in | phase $1 | phase $2 | phase $3 | phase $4 | phase $5 > $out &
-	unbuffer cat $out | tee /dev/stderr > $in &
+	loop=$(mktemp -u)
+	mkfifo $loop
+	trap "rm $loop" EXIT
 
-	echo 0 > $in
-
-	wait $engined
-	# unbuffer cat $out | while read line; do echo $line >&2; echo $line ; done > $in
+	(echo 0; unbuffer timeout 0.2 cat <$loop) | phase $1 | phase $2 | phase $3 |phase $4 | phase $5 > >(tee /dev/stdout $loop) | tail -n 1
 }
 
 
-# permut 5 6 7 8 9 | while read line; do
-# 	echo $line $(amplify $line)
-# 	sleep 0.1
-# done
-
-mkfifo start
-(echo 0; unbuffer cat start) | phase 9 | phase 8 | phase 7 | phase 6 | phase 5 > start
+permut 5 6 7 8 9 | while read line; do
+	echo $line $(amplify $line)
+done | sort -n -k 6 | tail -n 1
