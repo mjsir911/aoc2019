@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 # vim: set fileencoding=utf-8 :
 
-import os
-from math import *
+from sys import stdin
 
 
 def fuel_required(mass):
-    return floor(mass / 3) - 2
+    return mass // 3 - 2
 
 
-print(sum(fuel_required(int(l)) for l in os.sys.stdin))
+print(sum(fuel_required(int(l)) for l in stdin))
