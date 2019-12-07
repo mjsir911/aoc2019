@@ -2,6 +2,13 @@
 #include <math.h>
 #include <stdlib.h>
 
+#define eprintf(...) fprintf(stderr, __VA_ARGS__)
+#ifdef TRACE
+	#define trace eprintf
+#else
+	#define trace(...)
+#endif
+
 void print_reel(size_t n, int reel[n]) {
 	printf("[");
 	for (int *i = reel; i < reel + n; i++) {
@@ -13,10 +20,10 @@ void print_reel(size_t n, int reel[n]) {
 int getval(int *r, int v, int **mode) {
 	switch (*((*mode)++)) {
 		case 1:
-			fprintf(stderr, " %d ", v);
+			trace(" %d ", v);
 			return v;
 		case 0:
-			fprintf(stderr, " *%d(=%d) ", v, r[v]);
+			trace(" *%d(=%d) ", v, r[v]);
 			return r[v];
 	}
 }
@@ -25,8 +32,8 @@ int getval(int *r, int v, int **mode) {
 void computer(int *r, FILE *input) {
 	int *p = r;
 	int op;
-	fprintf(stderr, "pc: %ld\n", (p) - r);
-	fprintf(stderr, "op: %d\n", *p);
+	trace("pc: %ld\n", (p) - r);
+	trace("op: %d\n", *p);
 	while ((op = *(p++))) {
 		int pmode_t[8] = {0};
 		int *pmode = pmode_t;
@@ -35,11 +42,11 @@ void computer(int *r, FILE *input) {
 		}
 		switch (op % 100) {
 			case 1: {
-				fprintf(stderr, "*%ld = ", (p) - r);
+				trace("*%ld = ", (p) - r);
 				int val1 = getval(r, *(p++), &pmode);
-				fprintf(stderr, "+");
+				trace("+");
 				int val2 = getval(r, *(p++), &pmode);
-				fprintf(stderr, "\n");
+				trace("\n");
 				r[*(p++)] = val1 + val2;
 				break;
 			}
@@ -52,28 +59,31 @@ void computer(int *r, FILE *input) {
 			case 3: {
 				char *in = NULL;
 				size_t n = 0;
-				fprintf(stderr, "input: ");
+				trace("*%d = input()(", *p);
 				int status = getline(&in, &n, input);
 				if (status == -1) {
-					fprintf(stderr, "expecting input!\n");
+					eprintf("expecting input!\n");
 					exit(1);
 				}
+				trace("=%d)\n", atoi(in));
 
 				r[*(p++)] = atoi(in);
 				if (in) free(in);
 				break;
 			}
 			case 4: {
+				trace("output(");
 				printf("%d\n", getval(r, *(p++), &pmode));
+				trace(")\n");
 				break;
 			}
 			case 5: {
-				fprintf(stderr, "if ");
+				trace("if ");
 				int cond = getval(r, *(p++), &pmode);
-				fprintf(stderr, "? jump");
+				trace("? jump");
 				int *loc = r + getval(r, *(p++), &pmode);
-				fprintf(stderr, "\n");
-				fprintf(stderr, "loc: %ld\n", loc - r);
+				trace("\n");
+				trace("loc: %ld\n", loc - r);
 				if (cond) {
 					p = loc;
 				}
@@ -104,12 +114,12 @@ void computer(int *r, FILE *input) {
 				break;
 			}
 			default: {
-				fprintf(stderr, "Unknown op!: %d\n", op);
+				eprintf("Unknown op!: %d\n", op);
 				exit(0);
 			}
 		}
-		fprintf(stderr, "pc: %ld\n", (p) - r);
-		fprintf(stderr, "op: %d\n", *p);
+		trace("pc: %ld\n", (p) - r);
+		trace("op: %d\n", *p);
 	}
 }
 
@@ -123,6 +133,6 @@ int main(int argc, char *argv[]) {
 		#endif
 	};
 	computer(reel, stdin);
-	fprintf(stderr, "exiting\n");
+	trace("exiting\n");
 	return 0;
 }

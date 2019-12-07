@@ -13,7 +13,7 @@ function permut() {
 }
 
 function phase() {
-	(echo $1; unbuffer cat) | stdbuf -i0 -o0 -e0  ./a.out 2> /dev/null
+	(echo $1; unbuffer cat) | stdbuf -i0 -o0 -e0  ./a.out
 }
 
 function amplify() {
