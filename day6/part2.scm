@@ -1,7 +1,7 @@
 #!/usr/bin/env -S csi -q
 (require-extension srfi-1)
 
-(load "part1.scm")
+(load "shared.scm")
 
 (define (graph-find t k)
 	(if (equal? k (car t))
