@@ -8,6 +8,3 @@ part1: computer.c
 
 part2: computer.c
 	gcc -lm $< -DINPUT=5 -o $@
-
-clean:
-	$(RM) $(PART1) $(PART2)

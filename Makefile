@@ -30,3 +30,6 @@ run1: my.in $(PART1)
 .PHONY: run2
 run2: my.in $(PART2)
 	./${PART2} < $<
+
+clean:
+	$(RM) $(shell cat .gitignore)
