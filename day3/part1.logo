@@ -15,7 +15,7 @@ end
 to dowire
 	make "DIRMAP [ [[U] 0] [[R] 90] [[D] 180] [[L] 270] ]
 	penup home pendown
-	output map [sentence case (first ?) DIRMAP butfirst ?] readcsv
+	output fput [0 0] map [sentence case (first ?) DIRMAP butfirst ?] readcsv
 	home
 end
 
