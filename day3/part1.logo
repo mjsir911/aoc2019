@@ -45,15 +45,12 @@ to between? :p1 :p2 :p3
 	              [[:p1 = :p2] "false ] ]
 end
 
-to intersect? :l1 l2
-	output cond [ [[and (vertical? :l1) (horizontal? :l2)] and (between? (y p1 :l1) (y p2 :l1) (y p1 :l2)) (between? (x p1 :l2) (x p2 :l2) (x p1 :l1))]
-	              [[and (vertical? :l2) (horizontal? :l1)] and (between? (y p1 :l2) (y p2 :l2) (y p1 :l1)) (between? (x p1 :l1) (x p2 :l1) (x p1 :l2))]
-	              [else "false] ]
+to intersect? :vl :hl
+	output and (between? (y p1 :vl) (y p2 :vl) (y p1 :hl)) (between? (x p1 :hl) (x p2 :hl) (x p1 :vl))
 end
-to intersection :l1 l2
-	output cond [ [[not intersect? :l1 :l2] []]
-	              [[and (vertical? :l1) (horizontal? :l2)] list y p1 :l2 x p1 :l1]
-	              [[and (vertical? :l2) (horizontal? :l1)] list y p1 :l1 x p1 :l2] ]
+
+to intersection :vl :hl
+	output ifelse [intersect? :vl :hl] [list y p1 :hl x p1 :vl] [[]]
 end
 
 to full? :l
@@ -64,8 +61,8 @@ to lines :ps
 	output filter "full? map [ ifelse empty? ?REST [[]] [list ? first ?REST] ] :ps
 end
 
-to intersections :w1 :w2
-	output filter "full? map.se [[l1] map [[l2] intersection :l1 :l2] :w1] :w2
+to intersections :vls :hls
+	output filter "full? map.se [[vl] map [[hl] intersection :vl :hl] :hls] :vls
 end
 
 to abs :x
