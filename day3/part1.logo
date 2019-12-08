@@ -76,8 +76,16 @@ to manhattan :p
 	output (abs x :p) + (abs y :p)
 end
 
+to everyother :l
+	output filter [ (modulo # 2) = 0 ] :l
+end
+
 to min :a :b
 	output ifelse :a < :b [:a] [:b]
+end
+
+to second :l
+	output first butfirst :l
 end
 
 clearscreen
@@ -90,9 +98,20 @@ make "green [0 255 0]
 setpencolor red
 make "wire1 map "pmov dowire
 setpencolor green
-show reduce "min map "manhattan filter "full? map.se [make "l list pos pmov ? map [intersection :l ?] lines :wire1 ] dowire
+make "wire2 map "pmov dowire
+; show reduce "min map "manhattan filter "full? map.se [make "l list pos pmov ? map [intersection :l ?] lines :wire1 ] dowire
+
+(ifelse vertical? (list first :wire1 second :wire1)
+	[make "hlines1 everyother lines :wire1 make "vlines1 everyother butfirst lines :wire1]
+	[make "vlines1 everyother lines :wire1 make "hlines1 everyother butfirst lines :wire1])
+
+ifelse vertical? (list first :wire2 second :wire2) [
+	make "hlines2 everyother lines :wire2 make "vlines2 everyother butfirst lines :wire2][
+	make "vlines2 everyother lines :wire2 make "hlines2 everyother butfirst lines :wire2]
 
 
-; show reduce "min map "manhattan intersections lines :wire1 lines :wire2
+show lines :wire1
+show reduce "min map "manhattan intersections :hlines1 :vlines2
+show reduce "min map "manhattan intersections :vlines1 :hlines2
 
 wait 60 * 3
