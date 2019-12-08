@@ -13,5 +13,5 @@ CHECKSUM ← {(+/+/(helper ⍵)=1) × (+/+/(helper ⍵)=2)}
 
 ⎕← CHECKSUM IMG
 
-DECODE ← {({((⍺=2) + 1) ⊃ ⍺ ⍵} ⌿) ⍵}
+DECODE ← {{(⍵ + 1) ⊃ " " "█"}¨(({((⍺=2) + 1) ⊃ ⍺ ⍵} ⌿) ⍵)}
 ⎕← DECODE IMG
