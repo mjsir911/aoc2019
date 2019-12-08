@@ -1,4 +1,5 @@
 #!/usr/bin/env -S apl --OFF -s -f
+⎕IO ← 0
 INP ← ⍎¨⍞
 
 RESHAPE_OVERFLOW ← {(((↑⍴⍵)÷(×/⍺)),⍺) ⍴ ⍵}
@@ -13,5 +14,5 @@ CHECKSUM ← {(+/+/(helper ⍵)=1) × (+/+/(helper ⍵)=2)}
 
 ⎕← CHECKSUM IMG
 
-DECODE ← {{(⍵ + 1) ⊃ " " "█"}¨(({((⍺=2) + 1) ⊃ ⍺ ⍵} ⌿) ⍵)}
+DECODE ← {{⍵ ⊃ " " "█"}¨{(⍺=2) ⊃ ⍺ ⍵} ⌿ ⍵}
 ⎕← DECODE IMG
