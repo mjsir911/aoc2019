@@ -1,15 +1,17 @@
 #!/usr/bin/env -S apl --OFF -s -f
 INP ← ⍎¨⍞
 
-DECODE ← {(((↑⍴⍵)÷(×/⍺)),⍺) ⍴ ⍵}
+RESHAPE_OVERFLOW ← {(((↑⍴⍵)÷(×/⍺)),⍺) ⍴ ⍵}
 
-IMG ← 6 25 DECODE INP
+IMG ← 6 25 RESHAPE_OVERFLOW INP
 
 ⍝ layer with least amount of 0s (first of sorted sums IMG=0)
-LAYER ← IMG[↑⍋ (+/+/(IMG = 0));;]
+helper ← {⍵[↑⍋ (+/+/(⍵=0));;]}
+
+CHECKSUM ← {(+/+/(helper ⍵)=1) × (+/+/(helper ⍵)=2)}
 
 ⍝ # of 1s * # of 2s
-⎕← (+/+/LAYER=1) × (+/+/LAYER=2)
+⎕← CHECKSUM IMG
 
-myop ← {((⍺=2) × ⍵) + ((⍺≠2)×⍺)}
-⎕← (myop ⌿) IMG
+DECODE ← {({((⍺=2) × ⍵) + ((⍺≠2)×⍺)} ⌿) ⍵}
+⎕← DECODE IMG
