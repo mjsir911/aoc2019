@@ -13,5 +13,5 @@ CHECKSUM ← {(+/+/(helper ⍵)=1) × (+/+/(helper ⍵)=2)}
 ⍝ # of 1s * # of 2s
 ⎕← CHECKSUM IMG
 
-DECODE ← {({((⍺=2) × ⍵) + ((⍺≠2)×⍺)} ⌿) ⍵}
+DECODE ← {({((⍺=2) + 1) ⊃ ⍺ ⍵} ⌿) ⍵}
 ⎕← DECODE IMG
