@@ -1,3 +1,4 @@
+#!/usr/bin/env -S apl --OFF -s -f
 INP ← ⍎¨⍕⍞
 
 DECODE ← {(((↑⍴⍵)÷(×/⍺)),⍺) ⍴ ⍵}
