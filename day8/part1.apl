@@ -10,7 +10,7 @@ IMG ← 6 25 RESHAPE_OVERFLOW INP
 helper ← {⍵[↑⍋ (+/+/(⍵=0));;]}
 
 ⍝ # of 1s * # of 2s
-CHECKSUM ← {(+/+/(helper ⍵)=1) × (+/+/(helper ⍵)=2)}
+CHECKSUM ← {(+/,(helper ⍵)=1) × (+/,(helper ⍵)=2)}
 
 ⎕← CHECKSUM IMG
 
