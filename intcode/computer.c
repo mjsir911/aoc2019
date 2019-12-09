@@ -17,8 +17,8 @@ void print_reel(size_t n, long reel[n]) {
 	printf("]\n");
 }
 
-long getval(long *r, long v, int **mode) {
-	switch (*((*mode)++)) {
+long getval(long *r, long v, int mode) {
+	switch (mode) {
 		case 1:
 			trace(" %ld ", v);
 			return v;
@@ -43,16 +43,16 @@ void computer(long *r, FILE *input) {
 		switch (op % 100) {
 			case 1: {
 				trace("*%ld = ", (p) - r);
-				long val1 = getval(r, *(p++), &pmode);
+				long val1 = getval(r, *(p++), *(pmode++));
 				trace("+");
-				long val2 = getval(r, *(p++), &pmode);
+				long val2 = getval(r, *(p++), *(pmode++));
 				trace("\n");
 				r[*(p++)] = val1 + val2;
 				break;
 			}
 			case 2: {
-				long val1 = getval(r, *(p++), &pmode);
-				long val2 = getval(r, *(p++), &pmode);
+				long val1 = getval(r, *(p++), *(pmode++));
+				long val2 = getval(r, *(p++), *(pmode++));
 				r[*(p++)] = val1 * val2;
 				break;
 			}
@@ -73,15 +73,15 @@ void computer(long *r, FILE *input) {
 			}
 			case 4: {
 				trace("output(");
-				printf("%ld\n", getval(r, *(p++), &pmode));
+				printf("%ld\n", getval(r, *(p++), *(pmode++)));
 				trace(")\n");
 				break;
 			}
 			case 5: {
 				trace("if ");
-				long cond = getval(r, *(p++), &pmode);
+				long cond = getval(r, *(p++), *(pmode++));
 				trace("? jump");
-				long *loc = r + getval(r, *(p++), &pmode);
+				long *loc = r + getval(r, *(p++), *(pmode++));
 				trace("\n");
 				trace("loc: %ld\n", loc - r);
 				if (cond!=0) {
@@ -90,22 +90,22 @@ void computer(long *r, FILE *input) {
 				break;
 			}
 			case 6: {
-				long cond = getval(r, *(p++), &pmode);
-				long *loc = r + getval(r, *(p++), &pmode);
+				long cond = getval(r, *(p++), *(pmode++));
+				long *loc = r + getval(r, *(p++), *(pmode++));
 				if (cond==0) {
 					p = loc;
 				}
 				break;
 			}
 			case 7: {
-				long val1 = getval(r, *(p++), &pmode);
-				long val2 = getval(r, *(p++), &pmode);
+				long val1 = getval(r, *(p++), *(pmode++));
+				long val2 = getval(r, *(p++), *(pmode++));
 				r[*(p++)] = val1 < val2;
 				break;
 			}
 			case 8: {
-				long val1 = getval(r, *(p++), &pmode);
-				long val2 = getval(r, *(p++), &pmode);
+				long val1 = getval(r, *(p++), *(pmode++));
+				long val2 = getval(r, *(p++), *(pmode++));
 				r[*(p++)] = val1 == val2;
 				break;
 			}
