@@ -84,7 +84,7 @@ void computer(int *r, FILE *input) {
 				int *loc = r + getval(r, *(p++), &pmode);
 				trace("\n");
 				trace("loc: %ld\n", loc - r);
-				if (cond) {
+				if (cond!=0) {
 					p = loc;
 				}
 				break;
@@ -92,7 +92,7 @@ void computer(int *r, FILE *input) {
 			case 6: {
 				int cond = getval(r, *(p++), &pmode);
 				int *loc = r + getval(r, *(p++), &pmode);
-				if (! cond) {
+				if (cond==0) {
 					p = loc;
 				}
 				break;
