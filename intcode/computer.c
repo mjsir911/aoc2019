@@ -53,8 +53,8 @@ void computer(long *r, FILE *input) {
 	int relative_base = 0;
 	long *p = r;
 	long op;
-	trace("pc: %ld\n", (p) - r);
-	trace("op: %ld\n", *p);
+	trace("%03ld: ", (p) - r);
+	// trace("op: %ld\n", *p);
 	while ((op = *(p++))) {
 		int pmode_t[8] = {0};
 		int *pmode = pmode_t;
@@ -158,8 +158,8 @@ void computer(long *r, FILE *input) {
 				exit(0);
 			}
 		}
-		trace("pc: %ld\n", (p) - r);
-		trace("op: %ld\n", *p);
+		trace("%03ld: ", (p) - r);
+		// trace("op: %ld\n", *p);
 	}
 }
 
