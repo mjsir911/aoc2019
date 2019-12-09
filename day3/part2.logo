@@ -1,0 +1,169 @@
+#!/usr/bin/env logo
+to rmov :dir :amount
+	setheading :dir fd :amount
+end
+
+to pmov :inst
+	rmov first inst last inst
+	output pos
+end
+
+to readcsv
+	output parse map [ ifelse ?=", [char 32] [?] ] readword
+end
+
+to dowire
+	make "DIRMAP [ [[U] 0] [[R] 90] [[D] 180] [[L] 270] ]
+	penup home pendown
+	output fput [0 0] map [sentence case (first ?) DIRMAP butfirst ?] readcsv
+	home
+end
+
+to p1 :l
+	output first :l
+end
+to p2 :l
+	output last :l
+end
+
+to x :p
+	output (first :p)
+end
+to y :p
+	output (last :p)
+end
+
+to vertical? :l
+	output (x p1 :l) = (x p2 :l)
+end
+to horizontal? :l
+	output (y p1 :l) = (y p2 :l)
+end
+to between? :p1 :p2 :p3
+	output cond [ [[:p1 < :p2] and :p1 < :p3 :p3 < :p2 ]
+	              [[:p1 > :p2] and :p1 > :p3 :p3 > :p2 ]
+	              [[:p1 = :p2] "false ] ]
+end
+
+to intersect? :vl :hl
+	output and (between? (y p1 :vl) (y p2 :vl) (y p1 :hl)) (between? (x p1 :hl) (x p2 :hl) (x p1 :vl))
+end
+
+to intersection :vl :hl
+	output ifelse [intersect? :vl :hl] [list x p1 :vl y p1 :hl] [[]]
+end
+
+to full? :l
+	output not empty? l
+end
+
+to lines :ps
+	output filter "full? map [ ifelse empty? ?REST [[]] [list ? first ?REST] ] :ps
+end
+
+to intersections :vls :hls
+; I swear crossmap should do the same thing but it takes so slow
+	output filter "full? map.se [[vl] map [[hl] intersection :vl :hl] :hls] :vls
+end
+
+to abs :x
+	output ifelse 0 < :x :x -:x
+end
+
+to manhattan :p
+	output (abs x :p) + (abs y :p)
+end
+
+to everyother :l
+	output filter [ (modulo # 2) = 0 ] :l
+end
+
+to min :a :b
+	output ifelse :a < :b [:a] [:b]
+end
+
+to second :l
+	output first butfirst :l
+end
+
+to topleft :n
+	output map [ list ? :n - ? ] iseq 1 :n - 1
+end
+
+to firstreducecrossmap :t :p :l1 :l2
+	show :l1
+	show :l2
+	output "false
+	; show map [ intersection first ? last ? ] map [ list item first ? :vlines1 item last ? :hlines2 ] topleft 2
+end
+
+to pair :a :b
+	output list :a :b
+end
+
+to distance :p1 :p2
+	output ifelse vertical? pair :p1 :p2 abs difference y :p1 y :p2 abs difference x :p1 x :p2
+end
+
+to wirepath :w :to
+	output lput :to filter [ member? :to ?REST ] :w
+end
+
+to wiredistance :path
+	show :path
+	output apply "sum map [ ifelse empty? ?REST [0] [distance ? first ?REST] ] :path
+end
+
+
+clearscreen
+window
+setscrunch 0.25 0.25
+
+; the only colors you need
+make "red [255 0 0]
+make "green [0 255 0]
+setpencolor red
+; wait 60
+make "wire1 map "pmov dowire
+setpencolor green
+make "wire2 map "pmov dowire
+; show reduce "min map "manhattan filter "full? map.se [make "l list pos pmov ? map [intersection :l ?] lines :wire1 ] dowire
+
+(ifelse vertical? (list first :wire1 second :wire1)
+	[make "hlines1 everyother lines :wire1 make "vlines1 everyother butfirst lines :wire1]
+	[make "vlines1 everyother lines :wire1 make "hlines1 everyother butfirst lines :wire1])
+
+ifelse vertical? (list first :wire2 second :wire2) [
+	make "hlines2 everyother lines :wire2 make "vlines2 everyother butfirst lines :wire2][
+	make "vlines2 everyother lines :wire2 make "hlines2 everyother butfirst lines :wire2]
+
+
+; sort based on manhattan
+
+
+; show firstreducecrossmap [ not empty? ? ] [ intersection ?1 ?2 ] :hlines1 :vlines2
+; show reduce "min map "manhattan intersections :vlines2 :hlines1
+; make "intercepts sentence (
+; 	(filter "full? map.se [map [ intersection first ? last ? ] map [ list item first ? :vlines2 item last ? :hlines1 ] topleft ? ] iseq 2 100)
+; 	(filter "full? map.se [map [ intersection first ? last ? ] map [ list item first ? :vlines1 item last ? :hlines2 ] topleft ? ] iseq 2 100)
+; )
+make "intercepts sentence (
+filter "full? map.se [filter [intersect? last ? first ?] map [ list item first ? :hlines1 item last ? :vlines2 ] topleft ? ] iseq 2 100) (
+filter "full? map.se [filter [intersect? first ? last ?] map [ list item first ? :vlines1 item last ? :hlines2 ] topleft ? ] iseq 2 100)
+
+
+make "phillip map [ list
+(lput apply "intersection ? wirepath :wire1 item 1 firsts ?) 
+wiredistance (lput apply "intersection ? wirepath :wire2 item 2 firsts ?) 
+] :intercepts
+
+show (last :phillip)
+; lput apply "intersection first intercepts wirepath :wire2 first first first intercepts
+; map [ distance ? first ?REST ] wirepath :wire2 first first first intercepts
+
+; show map.se [[v1] map [[h1] intersection :v1 :h1 ] :hlines1] :vlines2
+; show crossmap [ intersection ?1 ?2 ] :vlines2 :hlines1
+; show reduce "min map "manhattan intersections :vlines1 :hlines2
+
+
+; wait 60 * 3
