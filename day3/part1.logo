@@ -62,6 +62,7 @@ to lines :ps
 end
 
 to intersections :vls :hls
+; I swear crossmap should do the same thing but it takes so slow
 	output filter "full? map.se [[vl] map [[hl] intersection :vl :hl] :hls] :vls
 end
 
@@ -85,14 +86,26 @@ to second :l
 	output first butfirst :l
 end
 
+to topleft :n
+	output map [ list ? :n - ? ] iseq 1 :n - 1
+end
+
+to firstreducecrossmap :t :p :l1 :l2
+	show :l1
+	show :l2
+	output "false
+	; show map [ intersection first ? last ? ] map [ list item first ? :vlines1 item last ? :hlines2 ] topleft 2
+end
+
 clearscreen
 window
-setscrunch 0.1 0.1
+setscrunch 0.25 0.25
 
 ; the only colors you need
 make "red [255 0 0]
 make "green [0 255 0]
 setpencolor red
+; wait 60
 make "wire1 map "pmov dowire
 setpencolor green
 make "wire2 map "pmov dowire
@@ -107,8 +120,18 @@ ifelse vertical? (list first :wire2 second :wire2) [
 	make "vlines2 everyother lines :wire2 make "hlines2 everyother butfirst lines :wire2]
 
 
-show lines :wire1
-show reduce "min map "manhattan intersections :hlines1 :vlines2
-show reduce "min map "manhattan intersections :vlines1 :hlines2
+; sort based on manhattan
 
-wait 60 * 3
+
+; show firstreducecrossmap [ not empty? ? ] [ intersection ?1 ?2 ] :hlines1 :vlines2
+; show reduce "min map "manhattan intersections :vlines2 :hlines1
+show min (
+reduce "min map "manhattan filter "full? map.se [map [ intersection first ? last ? ] map [ list item first ? :vlines2 item last ? :hlines1 ] topleft ? ] iseq 2 100 )(
+reduce "min map "manhattan filter "full? map.se [map [ intersection first ? last ? ] map [ list item first ? :vlines1 item last ? :hlines2 ] topleft ? ] iseq 2 100 )
+
+; show map.se [[v1] map [[h1] intersection :v1 :h1 ] :hlines1] :vlines2
+; show crossmap [ intersection ?1 ?2 ] :vlines2 :hlines1
+; show reduce "min map "manhattan intersections :vlines1 :hlines2
+
+
+; wait 60 * 3
