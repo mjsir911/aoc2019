@@ -60,7 +60,7 @@ void computer(long *r, FILE *input) {
 				char *in = NULL;
 				size_t n = 0;
 				trace("*%ld = input()(", *p);
-				long status = getline(&in, &n, input);
+				ssize_t status = getline(&in, &n, input);
 				if (status == -1) {
 					eprintf("expecting input!\n");
 					exit(1);
