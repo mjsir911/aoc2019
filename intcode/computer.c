@@ -169,7 +169,7 @@ int main(int argc, char *argv[]) {
 		#ifdef INTPROG
 			INTPROG
 		#else
-			#include "prog.int"
+			#include "my.in"
 		#endif
 	};
 	computer(reel, stdin);
