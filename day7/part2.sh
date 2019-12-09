@@ -26,7 +26,8 @@ function amplify() {
 	| phase $2 \
 	| phase $3 \
 	| phase $4 \
-	| phase $5 > >(tee /dev/stdout $loop) \
+	| phase $5 \
+	| tee $loop \
 	| tail -n 1
 }
 
