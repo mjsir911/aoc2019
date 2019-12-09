@@ -17,19 +17,40 @@ void print_reel(size_t n, long reel[n]) {
 	printf("]\n");
 }
 
-long getval(long *r, long v, int mode) {
+long *getpos(long *r, long v, int mode, int rel_offset) {
 	switch (mode) {
-		case 1:
-			trace(" %ld ", v);
-			return v;
 		case 0:
-			trace(" *%ld(=%ld) ", v, r[v]);
-			return r[v];
+			trace("*%ld", v);
+			return r+v;
+		case 2:
+			trace("*(rb(=%d)%+ld)", rel_offset, v);
+			return r + rel_offset + v;
+		default:
+			return NULL;
 	}
 }
 
+long getval(long *r, long v, int mode, int rel_offset) {
+	switch (mode) {
+		case 1: {
+			trace("%ld", v);
+			return v;
+		}
+		case 2:
+		case 0: {
+			long val = *getpos(r, v, mode, rel_offset);
+			trace("(=%ld)", val);
+			return val;
+		}
+		default:
+			return 0;
+	}
+}
+
+
 #define lenof(l) sizeof(l) / sizeof(l[0])
 void computer(long *r, FILE *input) {
+	int relative_base = 0;
 	long *p = r;
 	long op;
 	trace("pc: %ld\n", (p) - r);
@@ -43,17 +64,17 @@ void computer(long *r, FILE *input) {
 		switch (op % 100) {
 			case 1: {
 				trace("*%ld = ", (p) - r);
-				long val1 = getval(r, *(p++), *(pmode++));
+				long val1 = getval(r, *(p++), *(pmode++), relative_base);
 				trace("+");
-				long val2 = getval(r, *(p++), *(pmode++));
+				long val2 = getval(r, *(p++), *(pmode++), relative_base);
 				trace("\n");
-				r[*(p++)] = val1 + val2;
+				*getpos(r, *(p++), *(pmode++), relative_base) = val1 + val2;
 				break;
 			}
 			case 2: {
-				long val1 = getval(r, *(p++), *(pmode++));
-				long val2 = getval(r, *(p++), *(pmode++));
-				r[*(p++)] = val1 * val2;
+				long val1 = getval(r, *(p++), *(pmode++), relative_base);
+				long val2 = getval(r, *(p++), *(pmode++), relative_base);
+				*getpos(r, *(p++), *(pmode++), relative_base) = val1 * val2;
 				break;
 			}
 			case 3: {
@@ -67,21 +88,21 @@ void computer(long *r, FILE *input) {
 				}
 				trace("=%ld)\n", atol(in));
 
-				r[*(p++)] = atoi(in);
+				*getpos(r, *(p++), *(pmode++), relative_base) = atoi(in);
 				if (in) free(in);
 				break;
 			}
 			case 4: {
 				trace("output(");
-				printf("%ld\n", getval(r, *(p++), *(pmode++)));
+				printf("%ld\n", getval(r, *(p++), *(pmode++), relative_base));
 				trace(")\n");
 				break;
 			}
 			case 5: {
 				trace("if ");
-				long cond = getval(r, *(p++), *(pmode++));
+				long cond = getval(r, *(p++), *(pmode++), relative_base);
 				trace("? jump");
-				long *loc = r + getval(r, *(p++), *(pmode++));
+				long *loc = r + getval(r, *(p++), *(pmode++), relative_base);
 				trace("\n");
 				trace("loc: %ld\n", loc - r);
 				if (cond!=0) {
@@ -90,23 +111,29 @@ void computer(long *r, FILE *input) {
 				break;
 			}
 			case 6: {
-				long cond = getval(r, *(p++), *(pmode++));
-				long *loc = r + getval(r, *(p++), *(pmode++));
+				long cond = getval(r, *(p++), *(pmode++), relative_base);
+				long *loc = r + getval(r, *(p++), *(pmode++), relative_base);
 				if (cond==0) {
 					p = loc;
 				}
 				break;
 			}
 			case 7: {
-				long val1 = getval(r, *(p++), *(pmode++));
-				long val2 = getval(r, *(p++), *(pmode++));
-				r[*(p++)] = val1 < val2;
+				long val1 = getval(r, *(p++), *(pmode++), relative_base);
+				long val2 = getval(r, *(p++), *(pmode++), relative_base);
+				*getpos(r, *(p++), *(pmode++), relative_base) = val1 < val2;
 				break;
 			}
 			case 8: {
-				long val1 = getval(r, *(p++), *(pmode++));
-				long val2 = getval(r, *(p++), *(pmode++));
-				r[*(p++)] = val1 == val2;
+				long val1 = getval(r, *(p++), *(pmode++), relative_base);
+				long val2 = getval(r, *(p++), *(pmode++), relative_base);
+				*getpos(r, *(p++), *(pmode++), relative_base) = val1 == val2;
+				break;
+			}
+			case 9: {
+				trace("relative_base += ");
+				relative_base += getval(r, *(p++), *(pmode++), relative_base);
+				trace("\n");
 				break;
 			}
 			case 99: {
