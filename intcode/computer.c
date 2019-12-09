@@ -125,7 +125,7 @@ void computer(int *r, FILE *input) {
 
 
 int main(int argc, char *argv[]) {
-	int reel[] = {
+	int reel[10000] = {
 		#ifdef INTPROG
 			INTPROG
 		#else
