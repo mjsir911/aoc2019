@@ -15,4 +15,8 @@ within_range(L, R) :- N in R, password(N, L).
 
 valid_password(L) :- within_range(L, 272091..815432), adjacent_doubles(L), incrementing(L).
 
-part1(N) :- setof(L, (valid_password(L), label(L)), C), length(C, N).
+:- initialization(part1, main).
+part1 :-
+	setof(L, (valid_password(L), label(L)), C),
+	length(C, N),
+  writeln(N).
