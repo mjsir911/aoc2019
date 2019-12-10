@@ -164,6 +164,10 @@ void computer(long *r, FILE *input) {
 }
 
 
+// stringizing
+#define xstr(s) str(s)
+#define str(s) #s
+
 int main(int argc, char *argv[]) {
 	long reel[10000] = {
 		#ifdef INTPROG
@@ -172,7 +176,13 @@ int main(int argc, char *argv[]) {
 			#include "my.in"
 		#endif
 	};
-	computer(reel, stdin);
+	#ifdef INPUT
+	char tmp[] = xstr(INPUT);
+	FILE *in = fmemopen(tmp, sizeof(tmp), "r");
+	#else
+	FILE *in = stdin;
+	#endif
+	computer(reel, in);
 	trace("exiting\n");
 	return 0;
 }
