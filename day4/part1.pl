@@ -16,12 +16,3 @@ within_range(L, R) :- N in R, password(N, L).
 valid_password(L) :- within_range(L, 272091..815432), adjacent_doubles(L), incrementing(L).
 
 part1(N) :- setof(L, (valid_password(L), label(L)), C), length(C, N).
-
-
-test([B, A, A]) :- B #\= A.
-test([B, A, A, C|_]) :- B #\= A, C #\= A.
-test([B|R]) :- test(R).
-
-shy_adjacent_doubles(R) :- test([-1|R]).
-
-part2(N) :- setof(L, (valid_password(L), shy_adjacent_doubles(L), label(L)), C), length(C, N).
