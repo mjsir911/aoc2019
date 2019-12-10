@@ -1,4 +1,4 @@
-%!/usr/bin/env swipl
+#!/usr/bin/env swipl
 :- use_module(library(clpfd)).
 
 % near(A, B) :- A #= B + 1; A #= B - 1.
