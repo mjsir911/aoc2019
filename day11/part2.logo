@@ -1,0 +1,47 @@
+#!/usr/bin/env logo
+
+to length :l
+	output reduce [ 1 + ?2] lput 0 :l
+end
+
+to tilecolor :pos :state
+	output ifelse member? pos :state [ 1 ] [ 0 ]
+end
+
+to paint :color
+	setpencolor :color
+	label "#
+end
+
+make "black 7
+make "white 0
+
+to process :direction :color :state
+	localmake "state ifelse equal? :color 7 [ lput pos :state ] [ filter [? <> pos] :state ]
+
+	paint :color
+	rt :turn
+	penup
+	fd 1
+	pendown
+	output :state
+end
+
+to doit :state
+	localmake "color case readword [ [[0] :white] [[1] :black] ]
+	localmake "turn case readword [ [[0] -90] [[1] 90] ]
+
+	localmake "state process :turn :color :state
+
+	print tilecolor pos :state
+	output :state
+end
+
+
+hideturtle
+setscrunch 10 10
+make "state (list pos)
+setpensize 10
+print tilecolor pos :state
+paint ifelse member? pos :state [ 0 ] [ 1 ]
+forever [ make "state doit :state wait 5 ]

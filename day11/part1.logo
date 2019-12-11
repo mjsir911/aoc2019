@@ -1,0 +1,49 @@
+#!/usr/bin/env logo
+
+to length :l
+	output reduce [ 1 + ?2] lput 0 :l
+end
+
+to tilecolor :pos :state
+	output ifelse member? pos :state [ 1 ] [ 0 ]
+end
+
+to paint :color
+	setpencolor :color
+	label "#
+end
+
+; trace [ label setpencolor fd rt member? pos gc case readword ]
+ openwrite "/dev/stderr
+make "seen []
+to doit :state
+	localmake "color case readword [ [[0] 0] [[1] 7] ]
+	localmake "turn case readword [ [[0] -90] [[1] 90] ]
+
+	localmake "state ifelse equal? :color 7 [ lput pos :state ] [ filter [? <> pos] :state ]
+
+	if not member? pos seen [ make "seen lput pos :seen ]
+
+	setpencolor :color
+	label "#
+
+
+	rt :turn
+	setpencolor 2
+	fd 1
+
+	print ifelse (member? pos :state) [ 1 ] [ 0 ]
+	setwrite "/dev/stderr
+	show length :seen
+	setwrite []
+	output :state
+end
+
+window
+hideturtle
+setscrunch 10 10
+make "state []
+norefresh
+print tilecolor pos :state
+paint ifelse member? pos :state [ 0 ] [ 1 ]
+forever [ make "state doit :state ]
