@@ -34,10 +34,6 @@ end
 
 simulate(bs::Array{Body,}) = [simulate(b, bs) for b in bs]
 
-function energy(me::Body)
-	return (abs(me.x.pos) + abs(me.y.pos) + abs(me.z.pos)) * (abs(me.x.vel) + abs(me.y.vel) + abs(me.z.vel))
-end
-
 b1 = Body(Dimension(-13, 0), Dimension(14, 0), Dimension(-7, 0))
 b2 = Body(Dimension(-18, 0), Dimension(9, 0), Dimension(0, 0))
 b3 = Body(Dimension(0, 0), Dimension(-3, 0), Dimension(-3, 0))
