@@ -34,8 +34,10 @@ b4 = Body((-15, 3, -13))
 
 
 bodies = [b1, b2, b3, b4]
-for i in range(1, stop=1000)
-	global bodies
-	bodies = [interact(b, bodies) for b in bodies]
+if abspath(PROGRAM_FILE) == @__FILE__
+	for i in range(1, stop=1000)
+		global bodies
+		bodies = [interact(b, bodies) for b in bodies]
+	end
+	println(sum(energy, (bodies)))
 end
-println(sum(energy, (bodies)))
