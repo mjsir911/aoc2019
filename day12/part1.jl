@@ -23,7 +23,7 @@ function interactpos(me::Body)
 end
 
 function energy(me::Body)
-	return (+).(abs.(me.pos)...) * (+).(abs.(me.vel)...)
+	return sum(abs, me.pos) * sum(abs, me.vel)
 end
 
 b1 = Body([-13, 14, -7], [0, 0, 0])
