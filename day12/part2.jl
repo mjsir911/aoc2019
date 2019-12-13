@@ -13,7 +13,7 @@ function period(a::Vector{Body{N}}) where N
 end
 
 println(lcm(
-	period([Body((b.pos[1],)) for b in bodies]),
-	period([Body((b.pos[2],)) for b in bodies]),
-	period([Body((b.pos[3],)) for b in bodies]),
+	period([Body([b.pos[1]]) for b in bodies]),
+	period([Body([b.pos[2]]) for b in bodies]),
+	period([Body([b.pos[3]]) for b in bodies]),
 ))

@@ -24,13 +24,14 @@ function energy(me::Body)
 	return sum(abs, me.pos) * sum(abs, me.vel)
 end
 
-function Body(p::NTuple{N, Int}) where N
-	return Body{N}(p, zeros(N))
+function Body(pos)
+	n = length(pos)
+	return Body{n}(pos, zeros(n))
 end
-b1 = Body((-13, 14, -7))
-b2 = Body((-18, 9, 0))
-b3 = Body((0, -3, -3))
-b4 = Body((-15, 3, -13))
+b1 = Body([-13, 14, -7])
+b2 = Body([-18, 9, 0])
+b3 = Body([0, -3, -3])
+b4 = Body([-15, 3, -13])
 
 
 bodies = [b1, b2, b3, b4]
