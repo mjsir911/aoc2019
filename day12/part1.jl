@@ -1,4 +1,5 @@
 import StaticArrays
+import IterTools
 
 struct Body{DimN}
 		pos::StaticArrays.SVector{DimN,Int}
@@ -8,6 +9,15 @@ end
 function gravity(me::Body, others::Vector{Body{N}})::Body{N} where N
 	vel = me.vel + sum(sign.(o.pos - me.pos) for o in others)
 	return Body(me.pos + vel, vel)
+end
+
+function simulate(bs::Vector{Body{N}} where N)
+	Channel() do channel
+		while true
+			bs = [gravity(b, bs) for b in bs]
+			put!(channel, bs)
+		end
+	end
 end
 
 function energy(me::Body)
@@ -26,9 +36,6 @@ b4 = Body([-15, 3, -13])
 
 bodies = [b1, b2, b3, b4]
 if abspath(PROGRAM_FILE) == @__FILE__
-	for i in range(1, stop=1000)
-		global bodies
-		bodies = [gravity(b, bodies) for b in bodies]
-	end
-	println(sum(energy, (bodies)))
+	fin = IterTools.nth(simulate(bodies), 1000)
+	println(sum(energy, fin))
 end

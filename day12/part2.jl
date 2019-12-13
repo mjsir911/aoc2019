@@ -1,10 +1,8 @@
 include("part1.jl")
 
-function period(a::Vector{Body{N}}) where N
-	vectors = a
-	for i in Iterators.countfrom()
-		vectors = [gravity.(v, vectors) for v in vectors]
-		if vectors == a
+function period(bs::Vector{Body{N}}) where N
+	for (i, newbs) in enumerate(simulate(bs))
+		if newbs == bs
 			return i
 		end
 	end
