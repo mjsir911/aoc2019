@@ -8,11 +8,6 @@ struct Body
 	z::Dimension
 end
 
-# function Base.:+(me::Dimension, other::Dimension)
-# 	vel = (me.pos == other.pos ? 0 : me.pos < other.pos ? 1 : -1)
-# 	return Dimension(me.pos + vel, me.vel + vel)
-# end
-
 function simulate(me::Dimension, others::Vector{Dimension})
 	vel = 0
 	for b in others
