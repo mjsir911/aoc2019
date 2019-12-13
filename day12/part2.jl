@@ -8,8 +8,7 @@ function period(bs::Vector{Body{N}}) where N
 	end
 end
 
-println(lcm(
-	period([Body([b.pos[1]]) for b in bodies]),
-	period([Body([b.pos[2]]) for b in bodies]),
-	period([Body([b.pos[3]]) for b in bodies]),
-))
+println(lcm(period.(
+	[Body([b.pos[i]]) for b in bodies]
+	for i in [1, 2, 3]
+)))
