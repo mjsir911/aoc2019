@@ -38,4 +38,4 @@ for i in range(1, stop=1000)
 	global bodies
 	bodies = [interact(b, bodies) for b in bodies]
 end
-println((+).(energy.(bodies)...))
+println(sum(energy, (bodies)))
