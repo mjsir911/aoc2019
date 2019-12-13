@@ -1,13 +1,13 @@
 struct Body
-		 pos::Array{Int,1}
-		 vel::Array{Int,1}
+		 pos::Vector{Int}
+		 vel::Vector{Int}
 end
 
 function newvel(me::Body, other::Body)
 	return sign.(other.pos - me.pos)
 end
 
-function interact(me::Body, others::Array{Body,1})
+function interact(me::Body, others::Vector{Body})
 	vel = me.vel
 	for b in others
 		if b == me

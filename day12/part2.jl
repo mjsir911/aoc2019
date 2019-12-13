@@ -13,7 +13,7 @@ end
 # 	return Dimension(me.pos + vel, me.vel + vel)
 # end
 
-function simulate(me::Dimension, others::Array{Dimension,1})
+function simulate(me::Dimension, others::Vector{Dimension})
 	vel = 0
 	for b in others
 		if b == me
@@ -24,7 +24,7 @@ function simulate(me::Dimension, others::Array{Dimension,1})
 	return Dimension(me.pos + me.vel + vel, me.vel + vel)
 end
 
-function simulate(me::Body, others::Array{Body,1})
+function simulate(me::Body, others::Vector{Body})
 	return Body(
 		simulate(me.x, [o.x for o in others]),
 		simulate(me.y, [o.y for o in others]),
@@ -32,7 +32,7 @@ function simulate(me::Body, others::Array{Body,1})
 	)
 end
 
-simulate(bs::Array{Body,}) = [simulate(b, bs) for b in bs]
+simulate(bs::Vector{Body}) = [simulate(b, bs) for b in bs]
 
 b1 = Body(Dimension(-13, 0), Dimension(14, 0), Dimension(-7, 0))
 b2 = Body(Dimension(-18, 0), Dimension(9, 0), Dimension(0, 0))
@@ -52,7 +52,7 @@ b4 = Body(Dimension(-15, 0), Dimension(3, 0), Dimension(-13, 0))
 # d3 = Dimension( 4, 0)
 # d4 = Dimension( 3, 0)
 
-function period(a::Array{Dimension,1})
+function period(a::Vector{Dimension})
 	vectors = a
 	i = 0
 	while true
