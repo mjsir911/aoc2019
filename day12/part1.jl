@@ -4,9 +4,7 @@ struct Body
 end
 
 function newvel(me::Body, other::Body)
-	return [
-		sign(other.pos[i] - me.pos[i]) for i in [1, 2, 3]
-	]
+	return sign.(other.pos - me.pos)
 end
 
 function interact(me::Body, others::Array{Body,1})
