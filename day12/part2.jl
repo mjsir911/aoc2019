@@ -19,7 +19,7 @@ function simulate(me::Dimension, others::Array{Dimension,1})
 		if b == me
 			continue
 		end
-		vel += (me.pos == b.pos ? 0 : me.pos < b.pos ? 1 : -1)
+		vel += sign(b.pos - me.pos)
 	end
 	return Dimension(me.pos + me.vel + vel, me.vel + vel)
 end

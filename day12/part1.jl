@@ -5,9 +5,7 @@ end
 
 function newvel(me::Body, other::Body)
 	return [
-		(me.pos[1] == other.pos[1]) ? 0 : (me.pos[1] < other.pos[1] ? 1 : -1),
-		(me.pos[2] == other.pos[2]) ? 0 : (me.pos[2] < other.pos[2] ? 1 : -1),
-		(me.pos[3] == other.pos[3]) ? 0 : (me.pos[3] < other.pos[3] ? 1 : -1),
+		sign(other.pos[i] - me.pos[i]) for i in [1, 2, 3]
 	]
 end
 
