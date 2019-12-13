@@ -18,10 +18,6 @@ function interact(me::Body, others::Vector{Body})
 	return Body(me.pos + vel, vel)
 end
 
-function interactpos(me::Body)
-	return Body(me.pos + me.vel, me.vel)
-end
-
 function energy(me::Body)
 	return sum(abs, me.pos) * sum(abs, me.vel)
 end
