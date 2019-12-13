@@ -5,7 +5,7 @@ struct Body{DimN}
 		vel::StaticArrays.SVector{DimN,Int}
 end
 
-function interact(me::Body, others::Vector{Body{N}})::Body{N} where N
+function gravity(me::Body, others::Vector{Body{N}})::Body{N} where N
 	vel = me.vel + sum(sign.(o.pos - me.pos) for o in others)
 	return Body(me.pos + vel, vel)
 end
@@ -28,7 +28,7 @@ bodies = [b1, b2, b3, b4]
 if abspath(PROGRAM_FILE) == @__FILE__
 	for i in range(1, stop=1000)
 		global bodies
-		bodies = [interact(b, bodies) for b in bodies]
+		bodies = [gravity(b, bodies) for b in bodies]
 	end
 	println(sum(energy, (bodies)))
 end

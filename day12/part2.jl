@@ -3,7 +3,7 @@ include("part1.jl")
 function period(a::Vector{Body{N}}) where N
 	vectors = a
 	for i in Iterators.countfrom()
-		vectors = [interact(v, vectors) for v in vectors]
+		vectors = [gravity.(v, vectors) for v in vectors]
 		if vectors == a
 			return i
 		end
