@@ -1,3 +1,4 @@
+#!/usr/bin/env julia
 include("part1.jl")
 
 function gravity(me::Body{1}, others::Vector{Body{1}})::Body{1}

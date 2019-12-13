@@ -1,3 +1,4 @@
+#!/usr/bin/env julia
 import StaticArrays
 
 struct Body{DimN}
