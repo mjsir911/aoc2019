@@ -6,13 +6,7 @@ struct Body{DimN}
 end
 
 function interact(me::Body, others::Vector{Body{N}})::Body{N} where N
-	vel = me.vel
-	for b in others
-		if b == me
-			continue
-		end
-		vel += sign(b.pos - me.pos)
-	end
+	vel = me.vel + sum(sign.(o.pos - me.pos) for o in others)
 	return Body(me.pos + vel, vel)
 end
 
