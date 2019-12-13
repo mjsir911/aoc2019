@@ -26,10 +26,14 @@ function energy(me::Body)
 	return sum(abs, me.pos) * sum(abs, me.vel)
 end
 
-b1 = Body([-13, 14, -7], [0, 0, 0])
-b2 = Body([-18, 9, 0], [0, 0, 0])
-b3 = Body([0, -3, -3], [0, 0, 0])
-b4 = Body([-15, 3, -13], [0, 0, 0])
+function Body(p::Vector{Int})
+	n = length(p)
+	return Body(p, zeros(n))
+end
+b1 = Body([-13, 14, -7])
+b2 = Body([-18, 9, 0])
+b3 = Body([0, -3, -3])
+b4 = Body([-15, 3, -13])
 
 
 bodies = [b1, b2, b3, b4]
