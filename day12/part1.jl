@@ -28,13 +28,13 @@ function Body(pos)
 	return Body{n}(pos, zeros(n))
 end
 
-b1 = Body([-13, 14, -7])
-b2 = Body([-18, 9, 0])
-b3 = Body([0, -3, -3])
-b4 = Body([-15, 3, -13])
+function Body(s::String)
+	digit="-?[0-9]+"
+	return Body(parse.(Int, match(Regex("<x=($digit), y=($digit), z=($digit)>"), s).captures))
+end
 
+bodies = Body.(readlines())
 
-bodies = [b1, b2, b3, b4]
 if abspath(PROGRAM_FILE) == @__FILE__
 import IterTools
 	fin = IterTools.nth(simulate(bodies), 1000)
