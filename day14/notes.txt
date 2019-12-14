@@ -1,0 +1,8 @@
+this is a tree
+
+BUT
+
+it's a tree where node utilization can be shared
+
+so functionally each node is a generater that loops and requests more resources
+ever N requests
