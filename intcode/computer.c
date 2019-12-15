@@ -49,7 +49,7 @@ long getval(long *r, long v, int mode, int rel_offset) {
 
 
 #define lenof(l) sizeof(l) / sizeof(l[0])
-void computer(long *r, FILE *input) {
+void computer(long *r, FILE *input, FILE *output) {
 	int relative_base = 0;
 	long *p = r;
 	long op;
@@ -98,7 +98,7 @@ void computer(long *r, FILE *input) {
 			}
 			case 4: {
 				trace("output(");
-				printf("%ld", getval(r, *(p++), *(pmode++), relative_base));
+				fprintf(output, "%ld", getval(r, *(p++), *(pmode++), relative_base));
 				trace("): ");
 				printf("\n");
 				break;
@@ -182,7 +182,7 @@ int main(int argc, char *argv[]) {
 	#else
 	FILE *in = stdin;
 	#endif
-	computer(reel, in);
+	computer(reel, in, stdout);
 	trace("exiting\n");
 	return 0;
 }
