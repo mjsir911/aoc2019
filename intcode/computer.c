@@ -50,6 +50,8 @@ long getval(long *r, long v, int mode, int rel_offset) {
 
 #define lenof(l) sizeof(l) / sizeof(l[0])
 void computer(long *r, FILE *input, FILE *output) {
+	setbuf(input, NULL);
+	setbuf(output, NULL);
 	int relative_base = 0;
 	long *p = r;
 	long op;
