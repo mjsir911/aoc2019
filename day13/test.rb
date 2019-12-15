@@ -54,18 +54,28 @@ Curses.init_screen
 begin
   Curses.noecho
   Curses.curs_set(0)
+  automatic = false
   Thread.new {
     while true do
       c = Curses.getch()
-      if c == ','
+      if c == 'q'
+        exit
+      elsif c == 'a'
+        automatic = true
+        stickw.puts "0\n"
+      elsif c == ','
+        automatic = false
         stickw.puts "-1\n"
       elsif c == '.'
+        automatic = false
         stickw.puts "1\n"
       else
         stickw.puts "0\n"
       end
     end
   }
+  b_pos = 0
+  p_pos = 0
   while not screenr.eof? do
     x = Integer(screenr.readline.strip)
     y = Integer(screenr.readline.strip)
@@ -79,8 +89,17 @@ begin
     Curses.setpos(y, x)
     Curses.addch(drawings[type])
     Curses.refresh
-    sleep(0.000)
+    if type == PADDLE
+      p_pos = x
+    elsif type == BALL
+      b_pos = x
+      if automatic
+        stickw.puts (b_pos <=> p_pos).to_s
+        sleep(0.02)
+      end
+    end
   end
+  Curses.getch
 ensure
   Curses.close_screen
 end
