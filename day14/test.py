@@ -56,11 +56,17 @@ for line in stdin:
 fuel = Factory.fromGraph(dependency_graph, 'FUEL', {'ORE': ore})
 print(next(fuel))
 
-fuel_num = 0
-used_ore = 0
-for i in fuel:
-    fuel_num += 1
-    used_ore += i
-    print(used_ore, fuel_num)
 
-print(fuel_num)
+from fractions import Fraction
+def perfect_ratios(g, goal):
+    """
+    if a recipe requires 4 ores and creates 3 whatevers, the ratio of ore to
+    whatever is 4/3
+    """
+    if goal == 'ORE':
+        return 1
+
+    return Fraction(sum(perfect_ratios(g, subgoal) * mul for subgoal, mul in
+        g[goal][1].items()), g[goal][0])
+
+print(1e12 // perfect_ratios(dependency_graph, 'FUEL'))
