@@ -83,16 +83,16 @@ void computer(long *r, FILE *input) {
 			case 3: {
 				char *in = NULL;
 				size_t n = 0;
-				long *dest = getpos(r, *(p++), *(pmode++), relative_base);
-				trace(" = input()(", dest);
+				trace("input()(");
 				ssize_t status = getline(&in, &n, input);
 				if (status == -1) {
 					eprintf("expecting input!\n");
 					exit(1);
 				}
-				trace("=%ld)\n", atol(in));
+				trace("=%ld) → ", atol(in));
+				*getpos(r, *(p++), *(pmode++), relative_base) = atoi(in);
+				trace("\n");
 
-				*dest = atoi(in);
 				if (in) free(in);
 				break;
 			}
