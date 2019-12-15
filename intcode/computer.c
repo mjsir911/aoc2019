@@ -9,14 +9,6 @@
 	#define trace(...)
 #endif
 
-void print_reel(size_t n, long reel[n]) {
-	printf("[");
-	for (long *i = reel; i < reel + n; i++) {
-		printf("%ld, ", *i);
-	}
-	printf("]\n");
-}
-
 typedef long mem[10000];
 long *getpos(mem m, long v, int mode, int rel_offset) {
 	switch (mode) {
@@ -162,7 +154,6 @@ regs *tick(regs *r, mem m, bus input, bus output) {
 	return r;
 }
 
-#define lenof(l) sizeof(l) / sizeof(l[0])
 void computer(mem m, bus input, bus output) {
 	setbuf(input, NULL);
 	setbuf(output, NULL);
