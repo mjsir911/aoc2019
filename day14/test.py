@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # vim: set fileencoding=utf-8 :
-from itertools import repeat
+from itertools import repeat, islice
 from sys import stdin
 
 
 class Factory():
     def __init__(self, max_buf, inputs):
         self.max_buf = max_buf
-        self.inputs = inputs
+        self.inputs = (sum(i) for i in zip(*inputs))
         self.amount_left = 0
 
     def __iter__(self):
@@ -19,7 +19,7 @@ class Factory():
             return 0
         else:
             self.amount_left = self.max_buf
-            return sum(next(zip(*self.inputs)))
+            return next(self.inputs)
 
     @classmethod
     def fromGraph(cls, g, goal, known=None):
@@ -35,7 +35,7 @@ class Factory():
         return known[goal]
 
 
-ore = repeat(1)
+ore = islice(repeat(1), int(1e12))
 
 dependency_graph = {}
 
@@ -55,3 +55,12 @@ for line in stdin:
 # print(dependency_graph)
 fuel = Factory.fromGraph(dependency_graph, 'FUEL', {'ORE': ore})
 print(next(fuel))
+
+fuel_num = 0
+used_ore = 0
+for i in fuel:
+    fuel_num += 1
+    used_ore += i
+    print(used_ore, fuel_num)
+
+print(fuel_num)
