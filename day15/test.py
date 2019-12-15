@@ -36,8 +36,8 @@ def addcoord(p, d):
 import sys
 def draw():
     time.sleep(0.015)
-    for row in range(-20, 25):
-        for col in range(-40, 40):
+    for row in range(-25, 20):
+        for col in range(-25, 25):
             if (col, row) == pos:
                 sys.stderr.write('x')
             elif data.get((col, row)) == 'oxygen':
