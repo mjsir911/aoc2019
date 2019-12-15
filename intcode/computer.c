@@ -102,7 +102,7 @@ void computer(long *r, FILE *input, FILE *output) {
 				trace("output(");
 				fprintf(output, "%ld", getval(r, *(p++), *(pmode++), relative_base));
 				trace("): ");
-				printf("\n");
+				fprintf(output, "\n");
 				break;
 			}
 			case 5: {
