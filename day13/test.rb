@@ -12,24 +12,8 @@ module IntCode
   attach_function :fdopen, [:int, :string], :FILE
 
   def IntCode.run(code)
-    outr, outw = IO.pipe
-    inr, inw = IO.pipe
-
-    fork {
-      outr.close
-      inw.close
-      out_fd = IntCode.fdopen(outw.fileno, "w")
-      in_fd = IntCode.fdopen(inr.fileno, "r")
-      reasonably_large = 10000
-      FFI::MemoryPointer.new(:long, reasonably_large) do |mem|
-        mem.write_array_of_long(code)
-        IntCode.computer(mem, in_fd, out_fd)
-      end
-      outw.close
-    }
-    outw.close
-    inr.close
-    return outr, inw
+    io = IO.popen("./a.out", "a+")
+    return io, io
   end
 end
 
