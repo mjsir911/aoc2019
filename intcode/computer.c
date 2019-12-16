@@ -51,7 +51,7 @@ typedef struct {
 
 typedef FILE *bus;
 
-regs *tick(regs *r, mem m, bus input, bus output) {
+int tick(regs *r, mem m, bus input, bus output) {
 	trace("%03d: ", r->pc);
 	int op = m[r->pc++];
 	int pmode_t[8] = {0};
@@ -155,7 +155,7 @@ regs *tick(regs *r, mem m, bus input, bus output) {
 			exit(0);
 		}
 	}
-	return r;
+	return op % 100;
 }
 
 void computer(mem m, bus input, bus output) {
@@ -163,10 +163,7 @@ void computer(mem m, bus input, bus output) {
 	setbuf(output, NULL);
 	regs r = {0, 0};
 	// trace("op: %ld\n", *p);
-	while ((m[r.pc] % 100) != 99) {
-		trace("{.pc=%d, .sp=%d}", r.pc, r.sp);
-		tick(&r, m, input, output);
-	}
+	while (tick(&r, m, input, output) != 99) {}
 }
 
 size_t get_csv(FILE *in, char *buf) {
