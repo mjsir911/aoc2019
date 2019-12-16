@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
+#include<sys/mman.h>
+#include <unistd.h>
+
 
 #define eprintf(...) fprintf(stderr, __VA_ARGS__)
 #ifdef TRACE
@@ -9,7 +12,8 @@
 	#define trace(...)
 #endif
 
-typedef long mem[10000];
+#define MEM_SIZE 10000
+typedef long mem[MEM_SIZE];
 long *getpos(mem m, long v, int mode, int rel_offset) {
 	switch (mode) {
 		case 0:
@@ -165,26 +169,63 @@ void computer(mem m, bus input, bus output) {
 	}
 }
 
+size_t get_csv(FILE *in, char *buf) {
+	char c;
+	int i;
+	for (i=0; (c = fgetc(in)) != ',' && c != EOF; i++) {
+		buf[i] = c;
+	}
+	buf[i] = '\0';
+	return i;
+}
+
 
 // stringizing
 #define xstr(s) str(s)
 #define str(s) #s
 
 int main(int argc, char *argv[]) {
-	long reel[10000] = {
-		#ifdef INTPROG
-			INTPROG
-		#else
-			#include "my.in"
-		#endif
+	long *prog;
+	int prog_in = 3;
+
+	if (fdopen(prog_in, "w+")) {
+		ftruncate(prog_in, MEM_SIZE);
+		trace("backing with mmap to &4\n");
+		prog = mmap(NULL, MEM_SIZE, PROT_READ|PROT_WRITE,MAP_SHARED, prog_in, 0);
+	} else {
+		trace("backing to allocd\n");
+		prog = calloc(MEM_SIZE, sizeof(long));
+	}
+
+	int csv_in = 4;
+	FILE *csv_fin;
+	if ((csv_fin = fdopen(csv_in, "r"))) {
+		trace("loading from csv on &4\n");
+		char buf[20];
+		for (int i = 0; get_csv(csv_fin, buf); i++) {
+			prog[i] = atol(buf);
+		}
+	} else {
+		trace("loading from compile time\n");
+		long reel[10000] = {
+			#ifdef INTPROG
+				INTPROG
+			#else
+				#include "my.in"
+			#endif
+		};
+		prog = reel;
 	};
+
 	#ifdef INPUT
 	char tmp[] = xstr(INPUT);
+	trace("using compile time input: %s\n", tmp);
 	FILE *in = fmemopen(tmp, sizeof(tmp), "r");
 	#else
+	trace("using input from stdin");
 	FILE *in = stdin;
 	#endif
-	computer(reel, in, stdout);
+	computer(prog, in, stdout);
 	trace("exiting\n");
 	return 0;
 }
