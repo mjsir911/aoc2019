@@ -1,16 +1,6 @@
 require 'ffi'
 
 module IntCode
-  extend FFI::Library
-  ffi_lib './computer.so'
-  typedef :pointer, :FILE
-  attach_function :computer, [ :pointer, :FILE, :FILE ], :void
-  attach_variable :stdin, :FILE
-  attach_variable :stdout, :FILE
-  attach_function :fmemopen, [ :string, :size_t, :string ], :FILE
-  attach_function :puts, [ :string ], :int
-  attach_function :fdopen, [:int, :string], :FILE
-
   def IntCode.run(code)
     io = IO.popen("./a.out", "a+")
     return io, io
