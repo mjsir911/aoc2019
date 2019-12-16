@@ -6,3 +6,12 @@ it's a tree where node utilization can be shared
 
 so functionally each node is a generater that loops and requests more resources
 ever N requests
+
+
+
+ok so it turns out a tree of generators is super slow
+
+What people seemed to be doing which I like the most is mainting a shared pool
+of available resources and ticking it down and reticking it up, which
+accomplishes the same thing as a tree of generators but without a million
+function calls.
