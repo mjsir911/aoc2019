@@ -99,6 +99,8 @@ int tick(regs *r, mem m, bus input, bus output) {
 			fprintf(output, "%ld", getval(m, m[r->pc++], *(pmode++), r->sp));
 			trace("): ");
 			fprintf(output, "\n");
+			fflush(output);
+			trace("\n");
 			break;
 		}
 		case 5: {
@@ -148,6 +150,7 @@ int tick(regs *r, mem m, bus input, bus output) {
 			break;
 		}
 		case 99: {
+			trace("halt\n");
 			break;
 		}
 		default: {
