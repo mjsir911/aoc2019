@@ -107,9 +107,8 @@ if False:
         while True:
             i += 1
             dir = random.choice([1, 2, 3, 4])
-            if move(dir) == 2:
-                break
-            if i % 10000 == 0:
+            move(dir)
+            if i % 100 == 0:
                 draw()
     finally:
         with open('data.json', 'wb') as f:
