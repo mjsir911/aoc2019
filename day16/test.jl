@@ -13,26 +13,29 @@
 # 	end
 # end
 
+# only calculates at most length(l)/2:length(l)
 function phase(l::Vector{Int})
-	ret = Vector{Int}(undef, length(l))
 	runsum::Int = 0
-	for (i, thing) in Iterators.take(Iterators.reverse(enumerate(l)), Int(floor(length(l)/2)))
+	for (i, thing) in Iterators.reverse(enumerate(l))
 		runsum += thing
 		runsum %= 10
-		ret[i] = runsum
+		s[i] = runsum
 	end
-	return ret
 end
 
 
 
 inp = readline()
+i = parse(Int, inp[1:7])
+
+@show i
 s = [parse(Int, c) for c in inp]
 
-s = repeat(s, 10000)
-i = parse(Int, inp[1:7])
-for _ in 1:100
-	global s
-	s = phase(s)
-	@show s[i+1:i+8]
+# len s = len(inp) - (i % length(inp)) + floor((10000 * length(inp) - i) / length(inp))
+s = [s[i % length(inp) + 1:end];
+     repeat(s, Int(floor(((10000 * length(inp)) - i) / length(inp))))]
+@time for _ in 1:100
+	phase(s)
 end
+@show s[1:8]
+@show s[1:8] == [1, 9, 4, 2, 2, 5, 7, 5]
