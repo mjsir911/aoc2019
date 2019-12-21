@@ -1,0 +1,6 @@
+#!doit.sh
+NOT C J
+AND D J
+NOT A T 
+OR T J
+WALK
