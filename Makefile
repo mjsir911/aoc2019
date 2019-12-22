@@ -32,4 +32,4 @@ run2: my.in $(PART2)
 	./${PART2} < $<
 
 clean:
-	$(RM) $(shell cat .gitignore)
+	$(RM) $(shell cat .gitignore) $^

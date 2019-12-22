@@ -1,2 +1,1 @@
-#!/usr/bin/env -S awk -f
-{ printf "%c", $1 }
+../intcode/ascii/decode.awk

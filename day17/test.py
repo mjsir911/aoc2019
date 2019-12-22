@@ -3,7 +3,7 @@
 
 from subprocess import Popen, PIPE
 
-app = Popen("./a.out", stdout=PIPE, stdin=PIPE)
+app = Popen("./computer", stdout=PIPE, stdin=PIPE)
 
 m = {}
 def draw():

@@ -1,4 +1,4 @@
-#!doit.sh
+#!../intcode/ascii/doit.sh
 NOT C J
 AND D J
 NOT A T 

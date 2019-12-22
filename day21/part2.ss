@@ -1,4 +1,4 @@
-#!doit.sh
+#!../intcode/ascii/doit.sh
 OR B T
 AND C T
 AND A T

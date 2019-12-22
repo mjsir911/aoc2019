@@ -9,4 +9,5 @@ function unbuffer() {
 }
 
 
-unbuffer cat < $loop | unbuffer ./part1.logo | ./a.out > $loop
+exec 4<&0
+unbuffer cat < $loop | unbuffer $1 | ./computer > $loop

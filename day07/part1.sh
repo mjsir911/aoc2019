@@ -9,7 +9,7 @@ function permut() {
 }
 
 function phase() {
-	(echo $1; cat) | ./a.out
+	(echo $1; cat) | ./computer 4<my.in
 }
 
 function amplify() {
@@ -18,7 +18,6 @@ function amplify() {
 
 
 
-gcc computer.c -lm -DINTPROG="$(cat | tr -d '\n')"
 permut 0 1 2 3 4 | while read line; do
-	echo $(amplify $line)
+	echo $(amplify $line <<< "${PROG}")
 done | sort -n | tail -n 1

@@ -1,8 +1,9 @@
+#!/usr/bin/env ruby
 require 'ffi'
 
 module IntCode
   def IntCode.run(code)
-    io = IO.popen("./a.out", "a+")
+    io = IO.popen("./computer", "a+")
     return io, io
   end
 end
