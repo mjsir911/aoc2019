@@ -12,9 +12,11 @@
 	#define trace(...)
 #endif
 
+typedef long word;
+
 #define MEM_SIZE 10000
-typedef long mem[MEM_SIZE];
-long *getpos(mem m, long v, int mode, int rel_offset) {
+typedef word mem[MEM_SIZE];
+word *getpos(mem m, word v, int mode, int rel_offset) {
 	switch (mode) {
 		case 0:
 			trace("*%ld", v);
@@ -27,7 +29,7 @@ long *getpos(mem m, long v, int mode, int rel_offset) {
 	}
 }
 
-long getval(mem m, long v, int mode, int rel_offset) {
+word getval(mem m, word v, int mode, int rel_offset) {
 	switch (mode) {
 		case 1: {
 			trace("%ld", v);
@@ -35,7 +37,7 @@ long getval(mem m, long v, int mode, int rel_offset) {
 		}
 		case 2:
 		case 0: {
-			long val = *getpos(m, v, mode, rel_offset);
+			word val = *getpos(m, v, mode, rel_offset);
 			trace("(=%ld)", val);
 			return val;
 		}
@@ -61,18 +63,18 @@ int tick(regs *r, mem m, bus input, bus output) {
 	}
 	switch (op % 100) {
 		case 1: {
-			long val1 = getval(m, m[r->pc++], *(pmode++), r->sp);
+			word val1 = getval(m, m[r->pc++], *(pmode++), r->sp);
 			trace(" + ");
-			long val2 = getval(m, m[r->pc++], *(pmode++), r->sp);
+			word val2 = getval(m, m[r->pc++], *(pmode++), r->sp);
 			trace(" → ");
 			*getpos(m, m[r->pc++], *(pmode++), r->sp) = val1 + val2;
 			trace("\n");
 			break;
 		}
 		case 2: {
-			long val1 = getval(m, m[r->pc++], *(pmode++), r->sp);
+			word val1 = getval(m, m[r->pc++], *(pmode++), r->sp);
 			trace(" × ");
-			long val2 = getval(m, m[r->pc++], *(pmode++), r->sp);
+			word val2 = getval(m, m[r->pc++], *(pmode++), r->sp);
 			trace(" → ");
 			*getpos(m, m[r->pc++], *(pmode++), r->sp) = val1 * val2;
 			trace("\n");
@@ -105,9 +107,9 @@ int tick(regs *r, mem m, bus input, bus output) {
 		}
 		case 5: {
 			trace("if ");
-			long cond = getval(m, m[r->pc++], *(pmode++), r->sp);
+			word cond = getval(m, m[r->pc++], *(pmode++), r->sp);
 			trace("≠0 ? goto ");
-			long loc = getval(m, m[r->pc++], *(pmode++), r->sp);
+			word loc = getval(m, m[r->pc++], *(pmode++), r->sp);
 			trace("\n");
 			if (cond!=0) {
 				r->pc = loc;
@@ -116,9 +118,9 @@ int tick(regs *r, mem m, bus input, bus output) {
 		}
 		case 6: {
 			trace("if ");
-			long cond = getval(m, m[r->pc++], *(pmode++), r->sp);
+			word cond = getval(m, m[r->pc++], *(pmode++), r->sp);
 			trace("=0 ? goto ");
-			long loc = getval(m, m[r->pc++], *(pmode++), r->sp);
+			word loc = getval(m, m[r->pc++], *(pmode++), r->sp);
 			trace("\n");
 			if (cond==0) {
 				r->pc = loc;
@@ -126,18 +128,18 @@ int tick(regs *r, mem m, bus input, bus output) {
 			break;
 		}
 		case 7: {
-			long val1 = getval(m, m[r->pc++], *(pmode++), r->sp);
+			word val1 = getval(m, m[r->pc++], *(pmode++), r->sp);
 			trace(" < ");
-			long val2 = getval(m, m[r->pc++], *(pmode++), r->sp);
+			word val2 = getval(m, m[r->pc++], *(pmode++), r->sp);
 			trace(" → ");
 			*getpos(m, m[r->pc++], *(pmode++), r->sp) = val1 < val2;
 			trace("\n");
 			break;
 		}
 		case 8: {
-			long val1 = getval(m, m[r->pc++], *(pmode++), r->sp);
+			word val1 = getval(m, m[r->pc++], *(pmode++), r->sp);
 			trace("=");
-			long val2 = getval(m, m[r->pc++], *(pmode++), r->sp);
+			word val2 = getval(m, m[r->pc++], *(pmode++), r->sp);
 			trace(" → ");
 			*getpos(m, m[r->pc++], *(pmode++), r->sp) = val1 == val2;
 			trace("\n");
@@ -185,7 +187,7 @@ size_t get_csv(FILE *in, char *buf) {
 #define str(s) #s
 
 int main(int argc, char *argv[]) {
-	long *prog;
+	word *prog;
 	int prog_in = 3;
 
 	if (fdopen(prog_in, "w+")) {
@@ -194,7 +196,7 @@ int main(int argc, char *argv[]) {
 		prog = mmap(NULL, MEM_SIZE, PROT_READ|PROT_WRITE,MAP_SHARED, prog_in, 0);
 	} else {
 		trace("backing to allocd\n");
-		prog = calloc(MEM_SIZE, sizeof(long));
+		prog = calloc(MEM_SIZE, sizeof(word));
 	}
 
 	int csv_in = 4;
@@ -207,7 +209,7 @@ int main(int argc, char *argv[]) {
 		}
 	} else {
 		trace("loading from compile time\n");
-		long reel[10000] = {
+		word reel[10000] = {
 			#ifdef INTPROG
 				INTPROG
 			#else
