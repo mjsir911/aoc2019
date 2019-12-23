@@ -224,7 +224,7 @@ int main(int argc, char *argv[]) {
 	trace("using compile time input: %s\n", tmp);
 	FILE *in = fmemopen(tmp, sizeof(tmp), "r");
 	#else
-	trace("using input from stdin");
+	trace("using input from stdin\n");
 	FILE *in = stdin;
 	#endif
 	computer(prog, in, stdout);
