@@ -90,7 +90,7 @@ int tick(regs *r, mem m, bus input, bus output) {
 				exit(1);
 			}
 			trace("=%ld) → ", atol(in));
-			*getpos(m, m[r->pc++], *(pmode++), r->sp) = atoi(in);
+			*getpos(m, m[r->pc++], *(pmode++), r->sp) = atol(in);
 			trace("\n");
 
 			if (in) free(in);
