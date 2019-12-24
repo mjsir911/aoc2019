@@ -17,42 +17,47 @@ card_size = 10007
 
 deal = lambda c: list(reversed(c))
 
-cut = lambda c, n: c[n:] + c[:n]
 
-# print(cut([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 3))
-#
-# print(cut([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], -4))
+def deal():
+    return lambda i: -i - 1
 
-def increment(c, n):
-    ret = [0] * len(c)
-    for i, card in enumerate(c):
-        ret[(i * n) % len(ret)] = card
-    return ret
 
-# factory = list(range(card_size))
-# print(increment(factory, 3))
+def cut(n):
+    return lambda i: i - n
 
-def parse(line, cards):
+
+def increment(n):
+    return lambda i: i * n
+
+
+def parse(line):
     inst, *args = line.split()
     if inst == 'deal':
         if args[-1].isdigit():
-            return increment(cards, int(args[-1]))
-        return deal(cards)
+            return increment(int(args[-1]))
+        return deal()
     if inst == 'cut':
-        return cut(cards, int(args[-1]))
+        return cut(int(args[-1]))
 
+
+def compose(f, g):
+    return lambda i: f(g(i))
+
+
+f = lambda x: x  # identity function
 import sys
-cards = list(range(card_size))
-
 insts = [l for l in sys.stdin if l]
 for line in insts:
-    cards = parse(line, cards)
+    f = compose(parse(line), f)
+    # cards = parse(line, cards)
 
-cardi = cards[3589]
-cards = list(range(card_size))
-print(cards.index(cardi))
-print(cards)
-for line in insts:
-    cards = parse(line, cards)
-    print(cards)
-    print(cards.index(cardi))
+print(f(2019) % card_size)
+
+# cardi = cards[3589]
+# cards = list(range(card_size))
+# print(cards.index(cardi))
+# print(cards)
+# for line in insts:
+#     cards = parse(line, cards)
+#     print(cards)
+#     print(cards.index(cardi))
