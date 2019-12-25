@@ -1,0 +1,41 @@
+load(to_poly_solve);
+
+index: 3589;
+modulus: 10007$ /* number of cards */
+
+/*∘(f, g) := compose_functions([f, g]);*/
+∘(f, g) := block([], v: new_variable('general), 
+                    buildq([expr: expand(f(g(rat(v)))), v: v], lambda([v], expr)));
+infix("∘");
+
+deal(i) := -i - 1;
+cut[n](i) := i - n;
+increment[n](i) := i * n;
+
+parse(l) := block([], if sequal(split(l)[1], "cut") then return(cut[parse_string(split(l)[2])]),
+            if sequal(split(l)[1], "deal") then (
+              if sequal(split(l)[3], "increment") then return(increment[parse_string(split(l)[4])]),
+              return(deal)
+            ))$
+
+/*(L: [], while (c : readline(stdin)) # false do push(parse(c), L), f: compose_functions(L))$*/
+(f: identity, while (l : readline(stdin)) # false do f: parse(l) ∘ f)$
+f(rat(2019)); /* part one */
+
+"⁻¹"(g) := block([], v: new_variable('general), 
+                    buildq([expr: ev(x, solve(v = g(x), x)), v: v], lambda([v], expr)));
+
+
+postfix("⁻¹");
+
+f(x);
+f(rat(2019));
+
+°(f, n) := block([], if (n = 0) then return(identity), f ∘ °(f, n-1))$
+infix("°")$
+
+(f⁻¹°2)(rat(2020));
+(L:[f⁻¹], thru 70. do push(first(L)°2, L), L: reverse(L))$
+supershuffle: L[47] ∘ L[45] ∘ L[44] ∘ L[43] ∘ L[40] ∘ L[36] ∘ L[32] ∘ L[28] ∘ L[27] ∘ L[26] ∘ L[24] ∘ L[23] ∘ L[21] ∘ L[20] ∘ L[18] ∘ L[17] ∘ L[16] ∘ L[15] ∘ L[12] ∘ L[10] ∘ L[8] ∘ L[7] ∘ L[6] ∘ L[5] ∘ L[3] ∘ L[1];
+supershuffle(x);
+supershuffle(rat(2020));
