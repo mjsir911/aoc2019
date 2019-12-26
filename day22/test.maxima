@@ -26,7 +26,7 @@ modulus: 10007$ /* number of cards */
 f(rat(x));
 f⁻¹(rat(x));
 f(rat(2019));
-f⁻¹(rat(3589));
+f⁻¹(rat(%));
 
 log2(x) := log(x) / log(2)$
 "°"(f, n) := °[f, n]$
