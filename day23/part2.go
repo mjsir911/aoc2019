@@ -104,7 +104,7 @@ func (n *nic) start(r *router) {
 
 	file, _ := os.Open("my.in")
 	cmd.ExtraFiles = make([]*os.File, 10)
-	cmd.ExtraFiles[4 - 1] = file
+	cmd.ExtraFiles[4 - 3] = file
 
 	go cmd.Run()
 }
