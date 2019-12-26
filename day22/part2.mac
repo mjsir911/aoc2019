@@ -1,9 +1,8 @@
 load(to_poly_solve)$
 
-/*∘(f, g) := compose_functions([f, g]);*/
-∘(f, g) := block([], v: new_variable('general), 
-                    buildq([expr: expand(f(g(rat(v)))), v: v], lambda([v], expr)))$
 infix("∘")$
+"∘"(f, g) := block([], v: new_variable('general), 
+                    buildq([expr: expand(f(g(rat(v)))), v: v], lambda([v], expr)))$
 
 deal(i) := -i - 1;
 cut[n](i) := i - n;
@@ -15,30 +14,22 @@ parse(l) := block([], if sequal(split(l)[1], "cut") then return(cut[parse_string
               return(deal)
             ))$
 
-/*(L: [], while (c : readline(stdin)) # false do push(parse(c), L), f: compose_functions(L))$*/
 (f: identity, while (l : readline(stdin)) # false do f: parse(l) ∘ f)$
 
+postfix("⁻¹")$
 "⁻¹"(g) := block([], v: new_variable('general), 
                     buildq([expr: ev(x, solve(v = g(x), x)), v: v], lambda([v], expr)))$
-postfix("⁻¹")$
 
-modulus: 10007$ /* number of cards */
-f(rat(x));
-f⁻¹(rat(x));
-f(rat(2019));
-f⁻¹(rat(%));
 
 log2(x) := log(x) / log(2)$
-"°"(f, n) := °[f, n]$
 infix("°")$
+"°"(f, n) := "°"[f, n]$
 "°"[f, n] := block([],
             if (n = 1) then return(f),
             if (n = 2) then return(f ∘ f),
             if (mod(float(log2(n)), 1) = 0.0) then return((f°(2^(floor(float(log2(n))) - 1)))°2),
             return((f°(2^floor(float(log2(n))))) ∘ (f°(n-(2^floor(float(log2(n))))))))$
 
-modulus: 119315717514047$ /* number of cards */
 
-supershuffle: f⁻¹°101741582076661;
-supershuffle(x);
-supershuffle(rat(2020));
+modulus: 119315717514047$ /* number of cards */
+(f⁻¹°101741582076661)(rat(2020));

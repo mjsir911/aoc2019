@@ -1,0 +1,20 @@
+load(to_poly_solve)$
+
+infix("∘")$
+"∘"(f, g) := block([], v: new_variable('general), 
+                    buildq([expr: expand(f(g(rat(v)))), v: v], lambda([v], expr)))$
+
+deal(i) := -i - 1;
+cut[n](i) := i - n;
+increment[n](i) := i * n;
+
+parse(l) := block([], if sequal(split(l)[1], "cut") then return(cut[parse_string(split(l)[2])]),
+            if sequal(split(l)[1], "deal") then (
+              if sequal(split(l)[3], "increment") then return(increment[parse_string(split(l)[4])]),
+              return(deal)
+            ))$
+
+(f: identity, while (l : readline(stdin)) # false do f: parse(l) ∘ f)$
+
+modulus: 10007$ /* number of cards */
+f(rat(2019));
