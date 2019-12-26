@@ -28,12 +28,17 @@ f⁻¹(rat(x));
 f(rat(2019));
 f⁻¹(rat(3589));
 
-°(f, n) := block([], if (n = 0) then return(identity), f ∘ °(f, n-1))$
+log2(x) := log(x) / log(2)$
+"°"(f, n) := °[f, n]$
 infix("°")$
+"°"[f, n] := block([],
+            if (n = 1) then return(f),
+            if (n = 2) then return(f ∘ f),
+            if (mod(float(log2(n)), 1) = 0.0) then return((f°(2^(floor(float(log2(n))) - 1)))°2),
+            return((f°(2^floor(float(log2(n))))) ∘ (f°(n-(2^floor(float(log2(n))))))))$
 
 modulus: 119315717514047$ /* number of cards */
 
-(L:[f⁻¹], thru 70. do push(first(L)°2, L), L: reverse(L))$
-supershuffle: L[47] ∘ L[45] ∘ L[44] ∘ L[43] ∘ L[40] ∘ L[36] ∘ L[32] ∘ L[28] ∘ L[27] ∘ L[26] ∘ L[24] ∘ L[23] ∘ L[21] ∘ L[20] ∘ L[18] ∘ L[17] ∘ L[16] ∘ L[15] ∘ L[12] ∘ L[10] ∘ L[8] ∘ L[7] ∘ L[6] ∘ L[5] ∘ L[3] ∘ L[1];
+supershuffle: f⁻¹°101741582076661;
 supershuffle(x);
 supershuffle(rat(2020));
