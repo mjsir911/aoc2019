@@ -1,8 +1,4 @@
 #!/usr/bin/env tclsh
-set fd [open "| ./doit.sh" w+]
-fconfigure $fd -buffering line
-
-
 proc opposite {dir} {
 	switch $dir {
 		north {
@@ -21,53 +17,95 @@ proc opposite {dir} {
 }
 
 proc addcord {scoord dir} {
-	array set coord "$scoord"
 	switch $dir {
 		north {
-			incr coord(y)
+			lset scoord 1 [expr [lindex $scoord 1] + 1]
 		}
 		south {
-			incr coord(y) -1
+			lset scoord 1 [expr [lindex $scoord 1] - 1]
 		}
 		east {
-			incr coord(x)
+			lset scoord 0 [expr [lindex $scoord 0] + 1]
 		}
 		west {
-			incr coord(x) -1
+			lset scoord 0 [expr [lindex $scoord 0] - 1]
 		}
 	}
-	return [array get coord]
+	return $scoord
 }
 
 
+proc getlist {fd} {
+	while {[string match "- *" [set line [gets $fd]]]} {
+		lappend l [string replace $line 0 1]
+	}
+	return $l
+}
+proc getfloor {fd {dir ""}} {
+	if {![string equal $dir ""]} {
+		puts $fd $dir
+	}
+	set items {};
+	while {1} {
+		set line [gets $fd]
+		switch -glob $line {
+			"Command?" {
+				break
+			}
+			"*you are ejected back to the checkpoint." {
+				break
+			}
+			"== * ==" {
+				set roomName [string range $line 3 [expr [string length $line] - 4]]
+			}
+			"Doors here lead:" {
+				set dirs [getlist $fd]
+			}
+			"Items here:" {
+				set items [getlist $fd]
+			}
+			"You can't go that way." {
+				puts "err"
+				exit 1
+			}
+		}
+	}
+	list $roomName $dirs $items
+}
 
-proc goto {fd dir pos} {
-	array set coord [addcord $pos $dir]
-	puts $fd $dir
-	while {[string equal [set roomName [gets $fd]] ""]} {}
-	puts "$roomName, $coord(x), $coord(y)"
-	if {[string match "*Pressure-Sensitive Floor*" $roomName]} {
-		while {![string equal [gets $fd] "Command?"]} { }
+proc goto {fd body {dir ""} {pos {0 0}}} {
+	set coord [addcord $pos $dir]
+	lassign [getfloor $fd $dir] roomName directions items
+	eval $body
+	if {[string equal "Pressure-Sensitive Floor" $roomName]} {
+		getfloor $fd ; # on same floor
 		return
 	}
 
-	set i 0
-	while {![string equal [set line [gets $fd]] "Doors here lead:"]} {}
-	while {[string match "- *" [set line [gets $fd]]]} {
-		set directions($i) [string replace $line 0 1];
-		incr i
-	}
-	while {![string equal [gets $fd] "Command?"]} { }
-
-	for { set j 0 }  { $j < [array size directions] }  { incr j } {
-		if {![string equal [opposite $dir] $directions($j)]} {
-			goto $fd $directions($j) [array get coord]
+	foreach direction $directions {
+		if {![string equal [opposite $dir] $direction]} {
+			goto $fd $body $direction $coord
 		}
-  }
+	}
 	puts $fd [opposite $dir]
 	while {![string equal [gets $fd] "Command?"]} { }
 }
 
-while {![string equal [gets $fd] "Command?"]} { }
+# while {![string equal [gets $fd] "Command?"]} { }
 
-goto $fd west "x 0 y 0"
+
+proc intcode {fdname body} {
+	set fd [open "| ./doit.sh" w+]
+	fconfigure $fd -buffering line
+	set $fdname $fd
+	eval $body
+}
+
+intcode myfd {
+	goto $myfd {
+		global allItems
+		lappend allItems {*}$items
+		# puts "$roomName, $items, $coord, $directions"
+	}
+}
+puts $allItems
