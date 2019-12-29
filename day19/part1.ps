@@ -1,0 +1,59 @@
+/strappend { % (s) off (n) -> (sn) newend
+	3 2 roll dup
+	4 -2 roll
+	dup length
+	5 1 roll
+	exch dup 5 1 roll exch
+	putinterval
+	3 1 roll add
+} def
+
+/drone {
+	/cmd (%pipe%./helpwrapper.sh) def
+	55 string 0 % alloced string
+	cmd strappend
+	( ) strappend
+	4 -1 roll 10 string cvs strappend
+	( ) strappend
+	3 -1 roll 10 string cvs strappend
+	pop
+	(r) file
+	dup
+	read pop 48 sub
+	1 eq
+	exch
+	closefile
+} def
+
+/counter 0 def
+/loop_amount 49 def
+0 1 loop_amount { 
+	dup 4 sub 0 max
+	1 loop_amount {
+		exch
+		dup
+		3 1 roll
+		% remember, its swapped
+		drone
+		{ /counter 1 counter add def } if
+	} for
+	pop
+} for
+counter =
+
+% 
+% read pop 48 sub =
+
+
+% 90 sin =
+%  
+% 60 cos =
+%  
+% %tan of 45 degrees
+%  
+% 45 sin 45 cos div =
+%  
+% %inverse tan ( arc tan of sqrt 3)
+%  
+% 3 sqrt 1 atan =
+quit
