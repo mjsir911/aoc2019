@@ -1,0 +1,72 @@
+/strappend { % (s) off (n) -> (sn) newend
+	3 2 roll dup
+	4 -2 roll
+	dup length
+	5 1 roll
+	exch dup 5 1 roll exch
+	putinterval
+	3 1 roll add
+} def
+
+/drone { % x y => bool
+	exch % popping off the stack onto cli, x first
+	/cmd (%pipe%./helpwrapper.sh) def
+	55 string 0 % alloced string
+	cmd strappend
+	( ) strappend
+	4 -1 roll 10 string cvs strappend
+	( ) strappend
+	3 -1 roll 10 string cvs strappend
+	pop
+	(r) file
+	dup
+	read pop 48 sub
+	1 eq
+	exch
+	closefile
+} def
+
+/drawpoint { 1 0 360 arc closepath 0 setgray fill } def
+
+/counter 0 def
+/loop_amount 1000 def
+
+/prevxstart 0 def
+/prevxend -1 def
+5 1 loop_amount { 
+	/y exch def
+	/x prevxstart def
+	{
+		x y drone
+		{ x y drawpoint /prevxstart x def exit } if
+
+		/x x 1 add def
+	} loop
+	-1 prevxend eq { /prevxend x def } if
+	/x prevxend def
+	{
+		x y drone
+		not { /prevxend x def exit } if
+		x y drawpoint
+		/x x 1 add def
+	} loop
+} for
+stroke
+showpage
+
+% 
+% read pop 48 sub =
+
+
+% 90 sin =
+%  
+% 60 cos =
+%  
+% %tan of 45 degrees
+%  
+% 45 sin 45 cos div =
+%  
+% %inverse tan ( arc tan of sqrt 3)
+%  
+% 3 sqrt 1 atan =
+quit
