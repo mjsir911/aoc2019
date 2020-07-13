@@ -113,7 +113,7 @@ func (n *nic) start(r *router) {
 func newRouter() (r router) {
 	r = router{make([]nic, 50), packet{-1, -1}}
 	for i := range r.network {
-		r.network[i] = nic{make(chan packet, 1000), i, false};
+		r.network[i] = nic{make(chan packet), i, false};
 	}
 	return
 }

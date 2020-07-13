@@ -1,0 +1,1 @@
+../intcode/ascii/encode.sh

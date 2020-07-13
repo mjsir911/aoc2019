@@ -30,6 +30,9 @@ def increment(n):
     return lambda i: i * n
 
 
+def modsize(m):
+    return lambda f: lambda x: f(x) % m
+
 def parse(line):
     inst, *args = line.split()
     if inst == 'deal':
@@ -48,10 +51,11 @@ f = lambda x: x  # identity function
 import sys
 insts = [l for l in sys.stdin if l]
 for line in insts:
-    f = compose(parse(line), f)
+    f = compose((parse(line)), f)
     # cards = parse(line, cards)
 
-print(f(2019) % card_size)
+from sympy.abc import x
+print(f(x))
 
 # cardi = cards[3589]
 # cards = list(range(card_size))

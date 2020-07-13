@@ -12,21 +12,28 @@ __email__       = "@EMAIL@"
 __status__      = "Prototype"  # "Prototype", "Development" or "Production"
 __module__      = ""
 
+
+def modinv(x, p):
+    return pow(x, p-2, p)
+
+
 def doit(length, f):
     l = [0] * length
     for i in range(length):
-        l[f(i)] = i
+        l[f(i) % length] = i
     return l
+
 
 def doit_rev(length, f):
     l = [0] * length
     for i in range(length):
-        l[i] = f(i)
+        l[i] = f(i) % length
     return l
+
 
 def deal(length):
     def wraps(i):
-        return length - i - 1
+        return -i - 1
     return wraps
 
 deal_rev = deal
@@ -35,109 +42,41 @@ assert deal_rev(10)(9) == 0
 
 def cut(length, n):
     def wraps(i):
-        if n > 0:
-            if i >= n:
-                return i - n
-            else:
-                return length + i - n
-        if n < 0:
-            n = abs(n)
-            if i >= length - n:
-                return i - length + n
-            else:
-                return n + i
+        return (i - n) % length
     return wraps
-
-exit()
 
 def cut_rev(length, n):
     def wraps(i):
-        nonlocal n
-        if n > 0:
-            if i >= (length - n):
-                return abs((length - n) - i)
-            else:
-                return i + n
-        if n < 0:
-            n = abs(n)
-            if i < n:
-                return length - n + i
-            else:
-                return i - n
+        return (i + n + length)
     return wraps
 
 
-assert cut_rev(10, 3)(7) == 0
-assert cut_rev(10, 3)(9) == 2
-
-assert cut_rev(10, 3)(0) == 3
-assert cut_rev(10, 3)(4) == 7
-assert cut_rev(10, 3)(6) == 9
-
-assert cut_rev(10, -4)(0) == 6
-assert cut_rev(10, -4)(3) == 9
-assert cut_rev(10, -4)(4) == 0
-assert cut_rev(10, -4)(9) == 5
+# assert cut_rev(10, 3)(7) == 0
+# assert cut_rev(10, 3)(9) == 2
+#
+# assert cut_rev(10, 3)(0) == 3
+# assert cut_rev(10, 3)(4) == 7
+# assert cut_rev(10, 3)(6) == 9
+#
+# assert cut_rev(10, -4)(0) == 6
+# assert cut_rev(10, -4)(3) == 9
+# assert cut_rev(10, -4)(4) == 0
+# assert cut_rev(10, -4)(9) == 5
 
 
 
 def increment(length, n):
     def wraps(i):
-        return i * n % length
+        return i * n
     return wraps
-
-
-# x = y * n % length
-# x // n = y % length
-
-class MyNone():
-    def __repr__(self):
-        return '_'
-
-MyNone = MyNone()
 
 def increment_rev(length, n):
-    def whichloop(i):
-        return -i % n
-
-    def numinside(loop):
-        return (length - (loop % n) - 1) // n + 1
-
-    def overflow(i):
-        return abs((length - i) % n - 1)
-
-    def prev_overflow(i):
-        return overflow(i + 1)
-
-    def prev(i):
-        return i - n
-
-    def lastloop_prev(loop):
-        pass
-
     def wraps(i):
-        return numinside(i)
-        return whichloop(i)
-        loop = whichloop(i)
-        if loop == 0:
-            return 9
-        return n - prev_overflow(i)
-        # return (i % n * (length % n) + i // n) % length
-        # offset =
-        # return ((length // n) + i // n) * (i % n) + -length % n
+        return i // n
     return wraps
 
-# print(list(range(10)))
-n = 3
-print('c ', doit(10, increment(10, n)))  # increments by 7s
-print('m ', doit_rev(10, increment_rev(10, n)))  # increments by 7s
-print()
-n = 7
-print('c ', doit(10, increment(10, n)))  # increments by 7s
-print('m ', doit_rev(10, increment_rev(10, n)))  # increments by 7s
-# # doit(7) # incremnes by 3s
-# doit(9) # incremnets by 9s
-# print([0, 9, 8, 7, 6, 5, 4, 3, 2, 1])
+print([increment_rev(10, 3)(increment(10, 3)(i)) for i in range(10)])
+# print(doit_rev(10, increment_rev(10, 3)))
 exit()
 
 
@@ -174,6 +113,10 @@ def parse_rev(line, length):
     if inst == 'cut':
         return cut_rev(length, int(args[-1]))
 
+
+def compose(f, g):
+    return lambda x: f(g(x))
+
 # length = 19315717514047
 # length = 10
 length = 10007
@@ -181,13 +124,38 @@ index = 3589
 
 import sys
 
-f = parse_rev('deal with increment 12', length)
-print(doit(f, length)[:15])
-print([0, 834, 1668, 2502, 3336, 4170, 5004, 5838, 6672, 7506, 8340, 9174, 1, 835, 1669])
-# insts = sys.stdin.read().split('\n')
-# insts = [parse_rev(i, length) for i in insts if i]
-#
-# print(index)
-# for command in reversed(insts):
-#     index = command(index)
-#     print(index)
+insts = open('my.in', 'r').read().split('\n')
+insts = [parse_rev(i, length) for i in insts if i]
+
+from functools import reduce
+f = reduce(compose, insts)
+
+class Polynomial(tuple):
+    def __call__(self, x):
+        return sum(mul * (x ** i) for i, mul in enumerate(reversed(self)))
+
+    def __pow__(self, n):
+        assert n == 2
+        return Polynomial(((self[0] ** 2), self[0] * self[1] + self[1]))
+
+    def __mod__(self, n):
+        from operator import mod
+        from itertools import repeat
+        return Polynomial(map(mod, self, repeat(n)))
+
+# f = Polynomial((-17584892732278919399014760500371073496575520206629306885585573311933055587053384343403253418618412807862531365703696551339613887356028695756144640000000,
+#            -279894881169884414520727297171387139533541678605363352096978380061550209875419931903039237651322820491002708411625967820599124581520932680764840034226064636)) % length
+
+
+# f = lambda x: \
+#     (-17584892732278919399014760500371073496575520206629306885585573311933055587053384343403253418618412807862531365703696551339613887356028695756144640000000 % length) * x +\
+#     (-279894881169884414520727297171387139533541678605363352096978380061550209875419931903039237651322820491002708411625967820599124581520932680764840034226064636 % length)
+
+print(f)
+print(f(index) % length)
+print(f(f(index)) % length)
+print(f(f(f(index))) % length)
+print(f(f(f(f(index)))) % length)
+# print(f(f(f(f(f(f(index)))))) % length)
+# print(((f ** 2) ** 2)(index) % length)
+# print(f(index) % length)
