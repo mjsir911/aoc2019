@@ -1,26 +1,10 @@
 #!/usr/bin/env python3
 # vim: set fileencoding=utf-8 :
 
-__appname__     = "part2"
-__author__      = "@AUTHOR@"
-__copyright__   = ""
-__credits__     = ["@AUTHOR@"]  # Authors and bug reporters
-__license__     = "GPL"
-__version__     = "1.0"
-__maintainers__ = "@AUTHOR@"
-__email__       = "@EMAIL@"
-__status__      = "Prototype"  # "Prototype", "Development" or "Production"
-__module__      = ""
+from sys import stderr
+from time import sleep
 
-import pickle
-m = pickle.load(open('data.pickle', 'rb'))
-print(m)
-
-def draw():
-    for row in range(0, 50):
-        for col in range(0, 60):
-            print(m.get((col, row), '.'), end='')
-        print()
+from part1 import m, draw
 
 draw()
 
@@ -37,11 +21,11 @@ def add_cord(a, b):
 
 insts = []
 def next_dir(d, c, m):
-    print(f'd: {d}, c: {c}')
+    print(f'd: {d}, c: {c}', file=stderr)
     forwards = add_cord(c, dmap[d])
     l = add_cord(c, dmap[left[d]])
     r = add_cord(c, dmap[right[d]])
-    print('oldpos: ', c)
+    print('oldpos: ', c, file=stderr)
     if m.get(forwards, '.') == '#':
         newdir, newpos = d, forwards
     elif m.get(l, '.') == '#':
@@ -50,7 +34,7 @@ def next_dir(d, c, m):
     elif m.get(r, '.') == '#':
         insts.append('R')
         newdir, newpos = right[d], r
-    print('newpos: ', newpos)
+    print('newpos: ', newpos, file=stderr)
     insts.append('s')
 
     m[c] = '#'
@@ -69,7 +53,7 @@ while True:
         d, c = next_dir(d, c, m)
     except:
         break
-    # draw()
+    draw(); sleep(0.05)
 
 def compress_p1(insts):
     ret = []
