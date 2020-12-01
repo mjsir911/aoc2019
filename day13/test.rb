@@ -3,7 +3,7 @@ require 'ffi'
 
 module IntCode
   def IntCode.run(code)
-    io = IO.popen("./computer", "a+")
+    io = IO.popen("./computer 4< my.in", "a+")
     return io, io
   end
 end
@@ -25,6 +25,7 @@ directions = {left: -1, stay: 0, right: 1}
 
 require 'curses'
 
+score = 0
 Curses.init_screen
 begin
   Curses.noecho
@@ -32,6 +33,7 @@ begin
   automatic = false
   Thread.new {
     while true do
+      sleep(0.001) # speed of emulator
       c = Curses.getch()
       if c == 'q'
         exit
@@ -44,7 +46,7 @@ begin
       elsif c == '.'
         automatic = false
         stickw.puts "1\n"
-      else
+      elsif c == ' '
         stickw.puts "0\n"
       end
     end
@@ -56,8 +58,9 @@ begin
     y = Integer(screenr.readline.strip)
     type = Integer(screenr.readline.strip)
     if x == -1  and y == 0
+      score = type
       Curses.setpos(Curses.lines - 20, Curses.cols - 20)
-      Curses.addstr(type.to_s)
+      Curses.addstr(score.to_s)
       Curses.refresh
       next
     end
@@ -70,11 +73,11 @@ begin
       b_pos = x
       if automatic
         stickw.puts (b_pos <=> p_pos).to_s
-        sleep(0.02)
       end
     end
   end
   Curses.getch
 ensure
   Curses.close_screen
+  puts score
 end
