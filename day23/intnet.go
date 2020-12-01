@@ -22,7 +22,7 @@ type router struct {
 }
 
 func (r *router) route(to int, p packet) {
-	// fmt.Printf("(%d, %d) → %d\n", p.x, p.y, to)
+	fmt.Fprintf(os.Stderr, "(%d, %d) → %d\n", p.x, p.y, to)
 	if to == 255 {
 		r.nat = p
 	} else {
@@ -63,7 +63,7 @@ func (n nic) dispatch(r *router) (out io.Writer) {
 			ins.Scan()
 			y, err := strconv.Atoi(ins.Text())
 			if err != nil { log.Fatal("uhoh") }
-			// fmt.Printf("%d: ", n.id)
+			fmt.Fprintf(os.Stderr, "%d: ", n.id)
 			r.route(dest, packet{x, y})
 		}
 	}()
@@ -75,10 +75,10 @@ func (n *nic) recieve(r router) (in io.Reader) {
 	go func() {
 		for {
 			select {
-			case p, ok := <- n.comm:
+			case p, ok := <-n.comm:
 				if ok {
 					n.idle = false
-					// fmt.Printf("%d ← (%d, %d)\n", n.id, p.x, p.y);
+					fmt.Fprintf(os.Stderr, "%d ← (%d, %d)\n", n.id, p.x, p.y);
 					fmt.Fprint(w, p.String())
 					time.Sleep(time.Millisecond * 5)
 				} else {
