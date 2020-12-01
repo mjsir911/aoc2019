@@ -3,40 +3,35 @@
 
 from subprocess import Popen, PIPE
 
-app = Popen("./computer", stdout=PIPE, stdin=PIPE, close_fds=False)
+app = Popen("./computer | ./decode.awk", shell=True, stdout=PIPE, pass_fds=[4], text=True)
 
 m = {}
+
 def draw():
     for row in range(0, 50):
         for col in range(0, 60):
             print(m.get((col, row), '.'), end='')
         print()
 
+
 if 1:
-    x = 0
-    y = 0
-    for line, _ in zip(app.stdout, range(2745)):
-        c = chr(int(line.decode().strip()))
-        if c == '\n':
-            y += 1
-            x = 0
-        else:
-            m[(x, y)] = c
-            x += 1
+    maze = app.stdout
 else:
-    test_in = \
-"""..#..........
+    from io import StringIO
+    maze = StringIO("""
+..#.........
 ..#..........
 #######...###
 #.#...#...#.#
 #############
 ..#...#...#..
-..#####...^..'"""
+..#####...^..'
+""")
 
-
-    for y, line in enumerate(test_in.split()):
-        for x, c in enumerate(line):
-            m[(x, y)] = c
+for y, line in enumerate(maze):
+    line = line.strip()
+    for x, char in enumerate(line):
+        m[x, y] = char
 
 def find_intersects():
     for c in m.keys():
@@ -48,12 +43,12 @@ def find_intersects():
                             yield c
 
 
-s = list(find_intersects())
-for i in s:
-    m[i] = 'O'
-draw()
-# print([(c) for c in s])
-print(s)
-print([c[0] * c[1] for c in s])
-print(sum([c[0] * c[1] for c in s]))
-
+if __name__ == '__main__':
+    s = list(find_intersects())
+    for i in s:
+        m[i] = 'O'
+    draw()
+    # print([(c) for c in s])
+    # print(s)
+    # print([c[0] * c[1] for c in s])
+    print(sum([c[0] * c[1] for c in s]))
