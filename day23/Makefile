@@ -1,5 +1,5 @@
-PART1 := part1
-PART2 := part2
+PART1 = part1
+PART2 = part2
 include ../Makefile
 include ../intcode/Makefile
 
